@@ -1,12 +1,33 @@
 package CSCI446.Project4;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by Mathew Gostnell on 12/10/2016.
  * @author Mathew Gostnell
  */
 public class QLearn {
 
+    private Map<StateAction, Integer> n;    // table
+    private Action a = null;
+    private State p = null;
 
+    private double r = 0.f;
+    private double a = 1.f;
+
+    public Action QLearnAgent(State e) {
+        State j = e;
+        if (p != null) {
+            if (n.containsKey(new StateAction(e, a))) { // update the existing state-action frequency
+                n.put(new StateAction(e, a), n.get(new StateAction(e, a)) + 1);
+            } else { // insert new frequency count into our table
+                n.put(new StateAction(e, a), 1);
+            }
+            // Q[i, a] = Q[i, a] + a(r + max of
+        }
+    }
 
     /*
     Q(s,a) ← Q(s, a) + (r + maxa’ Q(s’,a’) - Q(s,a))
