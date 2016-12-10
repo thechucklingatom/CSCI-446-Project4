@@ -17,7 +17,8 @@ public class Velocity {
         yVelocity = yVel;
     }
 
-    public String toPrintString() {
+    @Override
+    public String toString() {
         return "Velocity:\n\t<" + xVelocity + ", " + yVelocity + ">";
     }
 }

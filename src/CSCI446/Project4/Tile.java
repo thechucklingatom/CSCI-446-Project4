@@ -23,7 +23,8 @@ public class Tile {
 		this.type = type;
 	}
 
-	public String toPrintString() {
+	@Override
+	public String toString() {
 		return "Tile:\n\tType:" + this.type.toString() + "\n\tReward:" + reward + "\n\tcurUtil:" + currentUtility + "\n\tprvUtil:" + previousUtility;
 	}
 
