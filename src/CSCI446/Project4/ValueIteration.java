@@ -1,7 +1,9 @@
 package CSCI446.Project4;
 
+import java.util.List;
+
 /**
- * Created by thechucklingatom on 12/10/2016.
+ * @author Robert Putnam
  */
 public class ValueIteration {
 
@@ -32,6 +34,25 @@ public class ValueIteration {
 	*/
 
 	private double epsilon;
+	private double maxChange = .5;
+	private double discount = .9;
+	private World world;
+
+	public ValueIteration(World world) {
+		this.world = world;
+	}
+
+	public void calculateUtilities(){
+		while(!(maxChange < epsilon * (1 - discount) / discount)){
+			maxChange = .5;
+
+			for(Tile[] tiles : world.theWorld){
+				for(Tile tile : tiles){
+					List<Action> actions = tile.actions;
+				}
+			}
+		}
+	}
 
 
 }
