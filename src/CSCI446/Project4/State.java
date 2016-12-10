@@ -14,7 +14,9 @@ public class State {
 
     public Tile getTile() { return t; }
     public Velocity getVelocity() { return v; }
-    public String toPrintString() {
-        return "State:\n" + t.toPrintString() + v.toPrintString();
+
+    @Override
+    public String toString() {
+        return "State:\n" + t.toString() + v.toString();
     }
 }

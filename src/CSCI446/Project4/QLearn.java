@@ -69,7 +69,7 @@ class StateAction {
     public State getState() { return s; }
     public Action getAction() { return a; }
     public void printStateAction() {
-        System.out.println(s.toPrintString());
+        System.out.println(s.toString());
         a.printAction();
     }
 }
