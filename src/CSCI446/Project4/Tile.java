@@ -5,6 +5,11 @@ package CSCI446.Project4;
  * @author Robert Putnam
  */
 public class Tile {
+
+	private double reward = 0;
+	private double currentUtility = 0;
+	private double previousUtility = 0;
+
 	public enum TileType{
 		WALL,
 		SAFE,
