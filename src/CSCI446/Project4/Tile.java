@@ -25,6 +25,11 @@ public class Tile {
 
 	public Tile(TileType type){
 		this.type = type;
+		if(type == TileType.WALL){
+			reward = -1;
+		}else{
+			reward = 1;
+		}
 		fillActions();
 	}
 
