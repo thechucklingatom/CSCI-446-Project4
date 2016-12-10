@@ -22,4 +22,17 @@ public class Tile {
 	public Tile(TileType type){
 		this.type = type;
 	}
+
+	public void setUtility(double currentUtility) {
+		previousUtility = currentUtility;
+		this.currentUtility = currentUtility;
+	}
+
+	public void setReward(double reward) {
+		this.reward = reward;
+	}
+
+	public double getReward() { return reward; }
+	public double getCurrentUtility() { return currentUtility; }
+	public double getPreviousUtility() { return previousUtility;}
 }
