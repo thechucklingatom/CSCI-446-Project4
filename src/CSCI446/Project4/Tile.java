@@ -23,6 +23,10 @@ public class Tile {
 		this.type = type;
 	}
 
+	public String toPrintString() {
+		return "Tile:\n\tType:" + this.type.toString() + "\n\tReward:" + reward + "\n\tcurUtil:" + currentUtility + "\n\tprvUtil:" + previousUtility;
+	}
+
 	public void setUtility(double currentUtility) {
 		previousUtility = currentUtility;
 		this.currentUtility = currentUtility;
