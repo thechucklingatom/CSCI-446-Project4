@@ -19,6 +19,11 @@ public class Velocity {
         yVelocity = yVel;
     }
 
+    public void reset(){
+        this.xVelocity = 0;
+        this.yVelocity = 0;
+    }
+
     public double getxVelocity() { return xVelocity; }
     public double getyVelocity() { return yVelocity; }
 
