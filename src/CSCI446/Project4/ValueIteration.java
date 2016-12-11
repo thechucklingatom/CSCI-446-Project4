@@ -26,7 +26,7 @@ public class ValueIteration {
 
 	*/
 
-	private double epsilon;
+	private double epsilon = .01;
 	private double maxChange = 0;
 	private final double discount = .6;
 	private double reward = -1;
@@ -35,8 +35,10 @@ public class ValueIteration {
 	private World world;
 	private List<State> states;
 	private List<Double> utilities;
+	private List<Action> maxActions;
 	private List<StateAction> policy;
 	private List<Tile> walls;
+	private int curIndex;
 
 	public ValueIteration(World world) {
 		this.world = world;
@@ -69,6 +71,7 @@ public class ValueIteration {
 			double oldUtility = 0;
 			for(State s : states){
 				double newUtility = reward + (discount * maxUtilAction(s));
+				utilities.set(curIndex, newUtility);
 				if(newUtility - oldUtility > maxChange){
 					maxChange = newUtility - oldUtility;
 				}
@@ -88,7 +91,9 @@ public class ValueIteration {
 		double curVelX = curVel.getxVelocity();
 		double curVelY = curVel.getyVelocity();
 		//calculate the utility if no action is applied (failure)
+		int curStateInd = findState(curX, curY, curVelX, curVelY);
 		int nxtStateInd = findState(curX + curVelX, curY + curVelY, curVelX, curVelY);
+		curIndex = curStateInd;
 		failU = utilities.get(nxtStateInd);
 		maxUtil = failU;
 		//*THIS IS FOR CRASH SCENARIO NEAREST TILE*/
@@ -105,9 +110,11 @@ public class ValueIteration {
 				totalU = (pOfSucces*sucU) + (pOfFail*failU);
 				if(totalU > maxUtil){
 					maxUtil = totalU;
+					maxA = curA;
 				}
 			}
 		} //at this point, we have the utilities of all possible actions
+		maxActions.set(curStateInd, maxA);
 		return maxUtil;
 	}
 
@@ -147,7 +154,9 @@ public class ValueIteration {
 				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 					for(int j = -5; j < 6; j++) { //possible yVel
 						states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
+						//create placeholders in our lists so that we can index to them later
 						utilities.add(0.0);
+						maxActions.add(new Action(0));
 					}
 				}
 			}//inner for
@@ -155,7 +164,9 @@ public class ValueIteration {
 	}
 
 	public void findPolicy(){
-
+		for(int i = 0; i < states.size(); i++){
+			policy.add(new StateAction(states.get(i), maxActions.get(i)));
+		}
 	}
 
 	public Action createAction(int inX, int inY){
