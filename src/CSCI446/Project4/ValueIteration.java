@@ -46,6 +46,24 @@ public class ValueIteration {
 		generateS();
 	}
 
+	public void runValueIteration(){
+		findP();
+		calculateUtilities();
+		findPolicy();
+		boolean done = false;
+		int numActions = 0;
+		State starting = new State(world.currentTile(),new Velocity(0,0));
+		while(!done){
+			StateAction policy = findStateAction(starting);
+			Action nextAction = policy.getAction();
+			Tile nextTile = world.move(nextAction);
+			starting = states.get(findState(nextTile.getxLocation(), nextTile.getyLocation(), world.curVel.getxVelocity(), world.curVel.getyVelocity()));
+			if(starting.getTile().type == Tile.TileType.FINISH){
+				done = true;
+			}
+		}
+	}
+
 	//find the probability that an action is not applied
 	public void findP(){
 		int numFail = 0;
@@ -145,6 +163,15 @@ public class ValueIteration {
 		return -1;
 	}
 
+	public StateAction findStateAction(State s){
+		for(StateAction sa : policy){
+			if(sa.getState() == s){
+				return sa;
+			}
+		}
+		return null;
+	}
+
 	public void generateS(){
 		for(Tile[] tiles : world.theWorld){
 			for(Tile tile : tiles){
@@ -161,6 +188,16 @@ public class ValueIteration {
 				}
 			}//inner for
 		}//outer for
+		for(Tile finish : world.finishTiles){
+			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
+				for(int j = -5; j < 6; j++) { //possible yVel
+					states.add(new State(finish, new Velocity(i, j))); //this means that we have every possible state
+					//create placeholders in our lists so that we can index to them later
+					utilities.add(1.0);
+					maxActions.add(new Action(0));
+				}
+			}
+		}
 	}
 
 	public void findPolicy(){
