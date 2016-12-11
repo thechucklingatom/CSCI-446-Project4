@@ -12,6 +12,7 @@ public class Tile {
 	private double reward = 0;
 	private double currentUtility = 0;
 	private double previousUtility = 0;
+	private int xLocation, yLocation;
 	List<Action> actions;
 
 	public enum TileType{
@@ -23,8 +24,10 @@ public class Tile {
 
 	TileType type;
 
-	public Tile(TileType type){
+	public Tile(TileType type, int x, int y){
 		this.type = type;
+		xLocation = x;
+		yLocation = y;
 		if(type == TileType.WALL){
 			reward = -1;
 		}else{
@@ -62,5 +65,13 @@ public class Tile {
 			actions.add(new Action(Action.DIRECTION.WEST));
 			actions.add(new Action(Action.DIRECTION.NORTHWEST));
 		}
+	}
+
+	public int getxLocation() {
+		return xLocation;
+	}
+
+	public int getyLocation() {
+		return yLocation;
 	}
 }
