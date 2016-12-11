@@ -80,8 +80,7 @@ public class ValueIteration {
 	public double maxUtilAction(State s){
 		double failU;
 		double maxUtil;
-		Tile futureTile;
-		State futureState;
+		Action maxA = createAction(0,0);
 		Velocity curVel = s.getVelocity();
 		Tile curTile = s.getTile();
 		int curX = curTile.getxLocation();
@@ -89,7 +88,6 @@ public class ValueIteration {
 		double curVelX = curVel.getxVelocity();
 		double curVelY = curVel.getyVelocity();
 		//calculate the utility if no action is applied (failure)
-		int curStateInd = findState(curX, curY, curVelX, curVelY);
 		int nxtStateInd = findState(curX + curVelX, curY + curVelY, curVelX, curVelY);
 		failU = utilities.get(nxtStateInd);
 		maxUtil = failU;
@@ -98,7 +96,8 @@ public class ValueIteration {
 			for(int j = -1; j < 2; j++){
 				if(i == 0 && j == 0){continue;}
 				//find the tile that corresponds to that stateaction pair
-				double sucU, totalU = 0;
+				double sucU, totalU;
+				Action curA = createAction(i, j);
 				double tempVelX = curVelX + i;
 				double tempVelY = curVelY + j;
 				nxtStateInd = findState(curX + tempVelX, curY + tempVelY, curVelX + i, curVelY + j);
@@ -153,5 +152,45 @@ public class ValueIteration {
 				}
 			}//inner for
 		}//outer for
+	}
+
+	public void findPolicy(){
+
+	}
+
+	public Action createAction(int inX, int inY){
+		Action action;
+		switch(inX){
+			case -1:
+				if(inY == -1){
+					action = new Action(5);
+				} else if(inY == 0){
+					action = new Action(6);
+				} else{
+					action = new Action(7);
+				}
+				break;
+			case 0:
+				if(inY == -1){
+					action = new Action(4);
+				} else if(inY == 0){
+					action = new Action(8);
+				} else{
+					action = new Action(0);
+				}
+				break;
+			case 1:
+				if(inY == -1){
+					action = new Action(3);
+				} else if(inY == 0){
+					action = new Action(2);
+				} else{
+					action = new Action(1);
+				}
+				break;
+			default: //we should never hit here
+				action = new Action(-1);
+		}
+		return action;
 	}
 }
