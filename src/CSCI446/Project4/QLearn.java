@@ -71,7 +71,6 @@ public class QLearn {
      * Calculates the action we should take given our QLearning process
      *
      * @param e the event our agent just transitioned into
-     * @param j the action our agent just took to transition into State e
      * @return the next Action our agent should take given our policy
      */
     public Action QLearnAgent(State e) {
@@ -80,20 +79,22 @@ public class QLearn {
          * alpha    := a double between 0 and 1 inclusive that is the learning rate
          *
          function Q-LEARNiNG-AGENT(e) returns an action
-         static: 	Q, a table of action values
-                    N, a table of state-action frequencies
-                    a, the last action taken
-                    p, the previous state visited
-                    r, the reward received in state p
+         static:
+         * [Q] := a table of action values
+         * [N] := a table of state-action frequencies
+         * [a] := the last action taken
+         * [p] := the previous state visited
+         * [r] := the reward received in state p
+
          j ← STATE[e]
          if i is non-null then
-            N[a,p] ← N[a,p] + 1
-            Q[a,p] ← Q[a,p] + alpha(r + maxa’ Q[a’,j] - Q[a,p])
+         |  N[a,p] ← N[a,p] + 1
+         |  Q[a,p] ← Q[a,p] + alpha(r + maxa’ Q[a’,j] - Q[a,p])
          if TERMINAL?[e] then
-            p ← null
+         |  p ← null
          else
-            p ← j
-            r ← REWARD[e]
+         |  p ← j
+         |  r ← REWARD[e]
          a ← arg maxa’, f(Q[a',j], N[a',j])
          return a
          */
@@ -107,19 +108,47 @@ public class QLearn {
                 // insert new frequency count into our table
                 n.put(new StateAction(e, a), 1);
             }
-
+            sa = new StateAction(e, a); // this state and our last action
+            double newUtil = q.get(sa) + alpha * (r + maxUtility(e));
+            q.put(sa, newUtil);
             // Q[i, a] = Q[i, a] + alpha(r + max a' (Q[a', j] - Q[a', p]))
         }
         if (e.getTile().type.equals(Tile.TileType.FINISH)) {
             p = null;
         } else {
-
+            p = e;
+            r = p.getTile().getReward();
+            alpha -= 0.001f; // slowly decrease to assist in convergence
         }
+
         return null;
     }
 
     public double maxUtility(State e) {
-        for
+        double maxUtil = Double.MIN_VALUE;
+        for (int i = 0; i < 9; i++) { // for each action, find the largest increase in utility
+            StateAction sa = new StateAction(e, new Action(i));
+            double q1, q2; // Q[a', j], Q[a', p]
+            if (q.containsKey(sa)) {
+                q1 = q.get(sa);
+            } else { // assume no utility if not found or initialized
+                q1 = 0.f;
+                q.put(sa, q1);
+            }
+            sa = new StateAction(p, new Action(i));
+            if (q.containsKey(sa)) {
+                q2 = q.get(sa);
+            } else {
+                q2 = 0.f;
+                q.put(sa, q2);
+            }
+
+            double util = q1 - q2;
+            if (util > maxUtil) {
+                maxUtil = util;
+            }
+        }
+        return maxUtil;
     }
 
 }
