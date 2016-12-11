@@ -100,29 +100,36 @@ public class ValueIteration {
 	}
 
 	//returns index of wanted state values in states/utilities
+	//the inputs are the TARGET STATE!
 	public int findState(double posX, double posY, double velX, double velY){
-		//iterate through states until we find the state with inputed values
+		Tile tarTile = world.getTileAtLocation((int)posX, (int)posY);
+		/*THIS ONLY APPLIES TO CRASH SCENARIO !*/
+		//must check to see if we would've landed on a wall
+		if(tarTile.type == Tile.TileType.WALL){
+			tarTile = world.closestTile(tarTile);
+			velX = 0;
+			velY = 0;
+		}
 
+		//iterate through states until we find the state with inputed values
 		for(int i = 0; i < states.size(); i++){
 			State s = states.get(i);
 			Velocity curVel = s.getVelocity();
 			double curVelX = curVel.getxVelocity();
 			double curVelY = curVel.getyVelocity();
 			Tile curTile = s.getTile();
-			double curPosX = curTile.getxLocation();
-			double curPosY = curTile.getyLocation();
 			//now compare
-			if(posX == curPosX && posY == curPosY && curVelX == velX && curVelY == velY){
+			if(tarTile == curTile && curVelX == velX && curVelY == velY){
 				return i;
 			}
-		}
+		} //if we reach here that means we're looking at a finish line
 		return -1;
 	}
 
 	public void generateS(){
 		for(Tile[] tiles : world.theWorld){
 			for(Tile tile : tiles){
-				if(tile.type == Tile.TileType.WALL || tile.type == Tile.TileType.FINISH){
+				if(tile.type == Tile.TileType.WALL){
 					continue;
 				}
 				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
