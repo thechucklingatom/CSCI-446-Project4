@@ -28,10 +28,10 @@ public class ValueIteration {
 
 	private double epsilon;
 	private double maxChange = 0;
-	private final double discount = .9;
+	private final double discount = .6;
 	private double reward = -1;
-	private double pOfSucces = .8;
-	private double pOfFail = .2;
+	private double pOfSucces = 1;
+	private double pOfFail = 0;
 	private World world;
 	private List<State> states;
 	private List<StateAction> policy;
@@ -42,11 +42,24 @@ public class ValueIteration {
 		generateS();
 	}
 
-	/**
-	 * The function that will calculate all the utilities for the each block
-	 * @return {@link StateAction} that contains the current state and the best action.
-	 */
-	public StateAction calculateUtilities(){
+	//find the probability that an action is not applied
+	public void findP(){
+		int numFail = 0;
+		int numTotal = 0;
+		Tile curTile = world.currentTile();
+		for(int i = 0; i < 1000; i++) {
+			numTotal++;
+			Tile tempTile = world.pseudoMove(new Action(1));
+			if (curTile == tempTile) {
+				numFail++;
+			}
+		}
+		pOfFail = numFail / numTotal;
+		pOfSucces = (numTotal - numFail) / numTotal;
+	}
+
+	//The function that will calculate all the utilities for the each block
+	public void calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
 		while(!(maxChange < epsilon * (1 - discount) / discount)){
@@ -58,14 +71,16 @@ public class ValueIteration {
 					maxChange = newUtility - oldUtility;
 				}
 			}
-
 		}//while
-		return null;
 	}
 
 	//a lot of calculations and calls needed for this, so separated into new method
 	public double maxUtilAction(State s){
+		for(int i = -1; i < 2; i++){ //iterate through the possible actions
+			for(int j = -1; j < 2; j++){
 
+			}
+		}
 		return 0;
 	}
 

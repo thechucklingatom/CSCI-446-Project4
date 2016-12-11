@@ -25,7 +25,7 @@ public class Tile {
 
 	TileType type;
 
-	public Tile(World w,TileType type, int x, int y){
+	public Tile(World w,TileType type, int y, int x){
 		this.world = w;
 		this.type = type;
 		xLocation = x;
