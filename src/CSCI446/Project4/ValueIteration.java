@@ -78,25 +78,38 @@ public class ValueIteration {
 
 	//a lot of calculations and calls needed for this, so separated into new method
 	public double maxUtilAction(State s){
-		double[][] tempU = new double[3][3];
-		double failU = 0;
+		double failU;
+		double maxUtil;
 		Tile futureTile;
 		State futureState;
 		Velocity curVel = s.getVelocity();
 		Tile curTile = s.getTile();
 		int curX = curTile.getxLocation();
 		int curY = curTile.getyLocation();
+		double curVelX = curVel.getxVelocity();
+		double curVelY = curVel.getyVelocity();
 		//calculate the utility if no action is applied (failure)
-
+		int curStateInd = findState(curX, curY, curVelX, curVelY);
+		int nxtStateInd = findState(curX + curVelX, curY + curVelY, curVelX, curVelY);
+		failU = utilities.get(nxtStateInd);
+		maxUtil = failU;
 		//*THIS IS FOR CRASH SCENARIO NEAREST TILE*/
 		for(int i = -1; i < 2; i++){ //iterate through the possible actions
 			for(int j = -1; j < 2; j++){
 				if(i == 0 && j == 0){continue;}
 				//find the tile that corresponds to that stateaction pair
 				double sucU, totalU = 0;
+				double tempVelX = curVelX + i;
+				double tempVelY = curVelY + j;
+				nxtStateInd = findState(curX + tempVelX, curY + tempVelY, curVelX + i, curVelY + j);
+				sucU = utilities.get(nxtStateInd);
+				totalU = (pOfSucces*sucU) + (pOfFail*failU);
+				if(totalU > maxUtil){
+					maxUtil = totalU;
+				}
 			}
-		}
-		return 0;
+		} //at this point, we have the utilities of all possible actions
+		return maxUtil;
 	}
 
 	//returns index of wanted state values in states/utilities
