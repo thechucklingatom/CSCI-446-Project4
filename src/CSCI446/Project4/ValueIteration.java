@@ -100,8 +100,23 @@ public class ValueIteration {
 	}
 
 	//returns index of wanted state values in states/utilities
-	public int findState(int posX, int posY, int velX, int velY){
-		return 0;
+	public int findState(double posX, double posY, double velX, double velY){
+		//iterate through states until we find the state with inputed values
+
+		for(int i = 0; i < states.size(); i++){
+			State s = states.get(i);
+			Velocity curVel = s.getVelocity();
+			double curVelX = curVel.getxVelocity();
+			double curVelY = curVel.getyVelocity();
+			Tile curTile = s.getTile();
+			double curPosX = curTile.getxLocation();
+			double curPosY = curTile.getyLocation();
+			//now compare
+			if(posX == curPosX && posY == curPosY && curVelX == velX && curVelY == velY){
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public void generateS(){
