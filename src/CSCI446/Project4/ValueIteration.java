@@ -42,6 +42,11 @@ public class ValueIteration {
 		generateS();
 	}
 
+	//first method to find the probability of a not
+	public void findP(){
+
+	}
+
 	public void calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
@@ -54,13 +59,16 @@ public class ValueIteration {
 					maxChange = newUtility - oldUtility;
 				}
 			}
-
 		}//while
 	}
 
 	//a lot of calculations and calls needed for this, so separated into new method
 	public double maxUtilAction(State s){
+		for(int i = -1; i < 2; i++){ //iterate through the possible actions
+			for(int j = -1; j < 2; j++){
 
+			}
+		}
 		return 0;
 	}
 
