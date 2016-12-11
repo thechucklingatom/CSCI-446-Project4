@@ -73,12 +73,15 @@ public class QLearn {
     }
 
     public void runQLearn() {
+        int numActions = 0;
         State starting = p; // start at previous location or the start in this case
         Action a = null;    // obtain new actions based on QLearnAgent(State s);
         do {
             a = QLearnAgent(starting);
             starting = new State(w.move(a), w.curVel);
+            numActions++;
         } while (a != null);
+        System.out.println("QLearn finished the race after:\n\t" + numActions + " actions!");
     }
 
     /**
