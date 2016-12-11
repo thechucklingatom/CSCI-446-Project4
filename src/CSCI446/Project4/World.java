@@ -155,43 +155,44 @@ public class World {
 	public Tile pseudoMove(Action a) {
 		// performs a normal move with output without actually moving the agent
 		double prob = rng.nextDouble();
+		Velocity tempVelocity = curVel;
 		if (prob <= 0.8) {
 			switch (a.getActionInt()) {
 				case 0: // we are moving north
-					curVel.setyVelocity(-1.f);
+					tempVelocity.setyVelocity(-1.f);
 					break;
 				case 1: //we are moving
-					curVel.setxVelocity(1.f);
-					curVel.setyVelocity(-1.f);
+					tempVelocity.setxVelocity(1.f);
+					tempVelocity.setyVelocity(-1.f);
 					break;
 				case 2: // we are moving east
-					curVel.setxVelocity(1.f);
+					tempVelocity.setxVelocity(1.f);
 					break;
 				case 3:
-					curVel.setxVelocity(1.f);
-					curVel.setyVelocity(1.f);
+					tempVelocity.setxVelocity(1.f);
+					tempVelocity.setyVelocity(1.f);
 					break;
 				case 4:
-					curVel.setyVelocity(1.f);
+					tempVelocity.setyVelocity(1.f);
 					break;
 				case 5:
-					curVel.setxVelocity(-1.f);
-					curVel.setyVelocity(1.f);
+					tempVelocity.setxVelocity(-1.f);
+					tempVelocity.setyVelocity(1.f);
 					break;
 				case 6:
-					curVel.setxVelocity(-1.f);
+					tempVelocity.setxVelocity(-1.f);
 					break;
 				case 7:
-					curVel.setxVelocity(-1.f);
-					curVel.setyVelocity(-1.f);
+					tempVelocity.setxVelocity(-1.f);
+					tempVelocity.setyVelocity(-1.f);
 					break;
 				default:
 					break;
 			}
 		} else { // acceleration not applied randomly }
 		}
-		int tempY = yLocation + (int) curVel.getyVelocity();
-		int tempX = xLocation + (int) curVel.getxVelocity();
+		int tempY = yLocation + (int) tempVelocity.getyVelocity();
+		int tempX = xLocation + (int) tempVelocity.getxVelocity();
 		Tile dest = theWorld[tempX][tempY];
 
 		if (dest.type == Tile.TileType.WALL) {
