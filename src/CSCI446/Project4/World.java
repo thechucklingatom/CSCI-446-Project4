@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
  */
 public class World {
     private Random rng = new Random();
+    private int tmpX, tmpY;
     private int xLocation, yLocation;
     public Tile[][] theWorld;
     public List<Tile> finishTiles = new ArrayList();
@@ -31,6 +32,37 @@ public class World {
                     safeTiles.add(t2);
                 }
             }
+        }
+
+        for (Tile[] t1 : theWorld) {
+            for (Tile t2 : t1) {
+                setReward(t2);
+            }
+        }
+    }
+
+    public void setReward(Tile s) {
+        List<Tile> checked = new ArrayList<>();
+        s.setReward(findPath(s.getxLocation(), s.getyLocation(), checked));
+    }
+
+    public int findPath(int x, int y, List<Tile> checked) {
+        if (x < 0 || y < 0 || x > theWorld.length || y > theWorld[0].length) {
+            return Integer.MAX_VALUE; // longest path since it isn't valid
+        } else if (theWorld[x][y].type == Tile.TileType.WALL) {
+            return Integer.MAX_VALUE;
+        } else if (theWorld[x][y].type == Tile.TileType.FINISH) {
+            return 0; // don't include this action in the filePath
+        } else if (checked.contains(theWorld[x][y])) {
+            return Integer.MAX_VALUE;
+        } else {
+            checked.add(theWorld[x][y]);
+            int north = Math.abs(findPath(x, y+1, checked) + 1);
+            int south = Math.abs(findPath(x, y-1, checked) + 1);
+            int east = Math.abs(findPath(x+1, y, checked) + 1);
+            int west = Math.abs(findPath(x-1, y, checked) + 1);
+
+            return Math.min(Math.min(north, south), Math.min(east, west));
         }
     }
 
@@ -131,7 +163,7 @@ public class World {
 
     public double getReward(Tile s) {
         double minDist = Double.MAX_VALUE;
-        for (Tile sPrime : safeTiles) {
+        for (Tile sPrime : finishTiles) {
             if (Tile.distanceTo(s, sPrime) < minDist) {
                 minDist = Tile.distanceTo(s, sPrime);
             }
