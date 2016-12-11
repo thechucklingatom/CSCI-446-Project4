@@ -30,6 +30,8 @@ public class ValueIteration {
 	private double maxChange = .5;
 	private final double discount = .9;
 	private double reward = -.04;
+	private double pOfSucces = .8;
+	private double pOfFail = .2;
 	private World world;
 	private List<State> states;
 
@@ -43,13 +45,21 @@ public class ValueIteration {
 		//utility is below a threshold determined by the discount and epsilon
 		while(!(maxChange < epsilon * (1 - discount) / discount)){
 			maxChange = 0;
+			double oldUtility = 0;
 			for(State s : states){
-				double newUtility = reward + Math.max(;
-				)
+				double newUtility = reward + (discount * maxUtilAction(s));
+				if(newUtility - oldUtility > maxChange){
+					maxChange = newUtility - oldUtility;
+				}
 			}
 
 		}//while
 		return null;
+	}
+	//a lot of calculations and calls needed for this, so separated into new method
+	public double maxUtilAction(State s){
+
+		return 0;
 	}
 
 	public void generateS(){
