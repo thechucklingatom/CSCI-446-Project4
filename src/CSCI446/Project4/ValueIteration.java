@@ -78,13 +78,29 @@ public class ValueIteration {
 
 	//a lot of calculations and calls needed for this, so separated into new method
 	public double maxUtilAction(State s){
+		double[][] tempU = new double[3][3];
+		double failU = 0;
+		Tile futureTile;
+		State futureState;
+		Velocity curVel = s.getVelocity();
+		Tile curTile = s.getTile();
+		int curX = curTile.getxLocation();
+		int curY = curTile.getyLocation();
+		//calculate the utility if no action is applied (failure)
 
+		//*THIS IS FOR CRASH SCENARIO NEAREST TILE*/
 		for(int i = -1; i < 2; i++){ //iterate through the possible actions
 			for(int j = -1; j < 2; j++){
+				if(i == 0 && j == 0){continue;}
 				//find the tile that corresponds to that stateaction pair
-
+				double sucU, totalU = 0;
 			}
 		}
+		return 0;
+	}
+
+	//returns index of wanted state values in states/utilities
+	public int findState(int posX, int posY, int velX, int velY){
 		return 0;
 	}
 
@@ -92,9 +108,6 @@ public class ValueIteration {
 		for(Tile[] tiles : world.theWorld){
 			for(Tile tile : tiles){
 				if(tile.type == Tile.TileType.WALL || tile.type == Tile.TileType.FINISH){
-					if(tile.type == Tile.TileType.WALL){
-						walls.add(tile);
-					}
 					continue;
 				}
 				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
