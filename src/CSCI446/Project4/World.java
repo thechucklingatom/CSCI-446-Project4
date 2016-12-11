@@ -266,6 +266,9 @@ public class World {
 	}
 
 	public boolean moveGoesThroughFinish() {
+		if (theWorld[yLocation][xLocation].type == Tile.TileType.FINISH) {
+			return true;
+		}
 		int tempX = (int) curVel.getxVelocity();
 		int tempY = (int) curVel.getyVelocity();
 		if (tempY < 0) {
