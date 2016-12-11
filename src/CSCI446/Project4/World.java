@@ -12,7 +12,7 @@ public class World {
 	private Random rng = new Random();
 	private int tmpX, tmpY;
 	private int startX, startY;
-	private Tile startTile;
+	public Tile startTile;
 	private int xLocation, yLocation;
 	public Tile[][] theWorld;
 	public List<Tile> finishTiles = new ArrayList<>();
@@ -193,6 +193,18 @@ public class World {
 		}
 		int tempY = yLocation + (int) tempVelocity.getyVelocity();
 		int tempX = xLocation + (int) tempVelocity.getxVelocity();
+		if(tempX < 0){
+			tempX = 0;
+		}
+		if(tempY < 0){
+			tempY = 0;
+		}
+		if(tempX >= theWorld[0].length){
+			tempX = theWorld[0].length - 1;
+		}
+		if(tempY >= theWorld.length){
+			tempY = theWorld.length - 1;
+		}
 		Tile dest = theWorld[tempX][tempY];
 
 		if (dest.type == Tile.TileType.WALL) {

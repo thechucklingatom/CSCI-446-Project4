@@ -84,4 +84,13 @@ public class Tile {
 	public int getyLocation() {
 		return yLocation;
 	}
+
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Tile){
+			return xLocation == ((Tile) o).getxLocation() && yLocation == ((Tile) o).getyLocation();
+		}
+
+		return false;
+	}
 }

@@ -19,4 +19,13 @@ public class State {
     public String toString() {
         return "State:\n" + t.toString() + v.toString();
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof State){
+            return t.equals(((State) o).t) && v.equals(((State) o).v);
+        }else{
+            return false;
+        }
+    }
 }
