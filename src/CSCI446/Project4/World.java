@@ -8,12 +8,16 @@ import java.util.Random;
  * Created by thechucklingatom on 12/7/16.
  */
 public class World {
+	boolean crashToStart = false;
 	private Random rng = new Random();
 	private int tmpX, tmpY;
+	private int startX, startY;
+	private Tile startTile;
 	private int xLocation, yLocation;
 	public Tile[][] theWorld;
-	public List<Tile> finishTiles = new ArrayList();
-	public List<Tile> safeTiles = new ArrayList();
+	public List<Tile> finishTiles = new ArrayList<>();
+	public List<Tile> safeTiles = new ArrayList<>();
+	public List<Tile> startTiles = new ArrayList<>();
 	public Velocity curVel = new Velocity(0, 0);
 
 	public World() {
@@ -28,6 +32,8 @@ public class World {
 					finishTiles.add(t2);
 				} else if (t2.type == Tile.TileType.SAFE) {
 					safeTiles.add(t2);
+				} else if (t2.type == Tile.TileType.START) {
+					startTiles.add(t2);
 				}
 			}
 		}
@@ -43,6 +49,10 @@ public class World {
 				}
 			}
 		}
+
+		startTile = startTiles.get(rng.nextInt(startTiles.size()));
+		startX = startTile.getxLocation();
+		startY = startTile.getyLocation();
 	}
 
 	public void setReward(Tile s) {
@@ -100,10 +110,14 @@ public class World {
 		xLocation += (int) curVel.getxVelocity();
 		Tile dest = theWorld[xLocation][yLocation];
 
-		if (dest.type == Tile.TileType.WALL) {
+		if (dest.type == Tile.TileType.WALL && !crashToStart) {
 			dest = closestTile(dest);
 			xLocation = dest.getxLocation();
 			yLocation = dest.getyLocation();
+			curVel.reset();
+		} else if (dest.type == Tile.TileType.WALL) {
+			xLocation = startX;
+			yLocation = startY;
 			curVel.reset();
 		}
 		return theWorld[xLocation][yLocation];
