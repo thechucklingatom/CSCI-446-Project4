@@ -8,28 +8,20 @@ import java.util.List;
 public class ValueIteration {
 
 	/*
-	Value_Iteration(S,A,P,R,THETA)
-		INPUTS
-			S is the set of all states
-			A is the set of all actions
-			P is the state transition function specifying P(s'|s,a)
-			THETA is a threshold, THETA>0
-		OUTPUT
-			pi[S] approximately optimal policy
-			V[S] value function
-		LOCAL
-			real array V_k[S] is a sequence of value functions
-			action array pi[S]
-		assign V_0[S] arbitrarily
-		k <- 0
-		repeat
-			k <- k+1
-			for each state s do
-				V_k[s] = max_a sum_s, P(s'|s,a)(R(s,a,s') + Y^V_{k-1}[s'])
-		until for all |V_k[s] - V_{k-1}[s]|<0
-		for each state s do
-			pi[s] = argmax_a sum_s, P(s'|s,a)(R(s,a,s') + Y^V_{k-1}[s'])
-		return pi, V_k
+	function VALUE-ITERATION(mdp, e) returns a utility function
+		Inputs: mdp, a Markov Decision Process with states S, actions A(s), transition model
+			P(s’ | s,a), rewards R(s), and discount y
+			e, the maximum error allowed in the utility of any state
+		Local Variables: U, U’, vectors of utilities for states in S, initially zero
+			delta , the maximum change in the utility of any state in an iteration
+
+	repeat
+		U←U’ ; ←0
+		for each state s in S do
+			U’[s]←R(s) + argmax(P(s’ | s,a)U[s’])
+			if U’[s] - U[s] >  then  ←U’[s] - U[s]
+	until delta < e(1 - y)y /
+	return U
 
 	*/
 
@@ -48,10 +40,23 @@ public class ValueIteration {
 
 			for(Tile[] tiles : world.theWorld){
 				for(Tile tile : tiles){
+					if(tile.type == Tile.TileType.WALL){
+						continue;
+					}
 					List<Action> actions = tile.actions;
-				}
-			}
-		}
+					double currentReward = tile.getReward();
+					double currentUtility = tile.getCurrentUtility();
+					if(currentUtility == 0){
+						currentUtility = tile.getReward();
+					}
+
+					for(Action action : actions){
+
+					}
+
+				}//inner for
+			}//outer for
+		}//while
 	}
 
 
