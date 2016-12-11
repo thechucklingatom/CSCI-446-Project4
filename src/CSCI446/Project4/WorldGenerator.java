@@ -14,6 +14,7 @@ public class WorldGenerator {
 	World generatedWorld;
 
 	public WorldGenerator(String filePath){
+		generatedWorld = new World();
 		try {
 			fileReader = new FileReader(filePath);
 		} catch (FileNotFoundException e) {

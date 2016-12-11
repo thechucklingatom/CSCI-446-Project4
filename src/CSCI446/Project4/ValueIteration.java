@@ -27,8 +27,8 @@ public class ValueIteration {
 	*/
 
 	private double epsilon;
-	private double maxChange = .5;
-	private final double discount = .6;
+	private double maxChange = 0;
+	private final double discount = .9;
 	private double reward = -1;
 	private double pOfSucces = .8;
 	private double pOfFail = .2;
@@ -38,16 +38,15 @@ public class ValueIteration {
 
 	public ValueIteration(World world) {
 		this.world = world;
-		states = new ArrayList<State>();
+		states = new ArrayList<>();
 		generateS();
 	}
 
-	//first method to find the probability of a not
-	public void findP(){
-
-	}
-
-	public void calculateUtilities(){
+	/**
+	 * The function that will calculate all the utilities for the each block
+	 * @return {@link StateAction} that contains the current state and the best action.
+	 */
+	public StateAction calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
 		while(!(maxChange < epsilon * (1 - discount) / discount)){
@@ -60,6 +59,7 @@ public class ValueIteration {
 				}
 			}
 		}//while
+		return null;
 	}
 
 	//a lot of calculations and calls needed for this, so separated into new method

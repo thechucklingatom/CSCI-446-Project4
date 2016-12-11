@@ -17,6 +17,10 @@ public class World {
     public List<Tile> safeTiles = new ArrayList();
     public Velocity curVel = new Velocity(0, 0);
 
+    public World(){
+
+    }
+
     public World(Tile[][] theWorld) {
         this.theWorld = theWorld;
         for (Tile[] t1 : theWorld) {
@@ -28,6 +32,10 @@ public class World {
                 }
             }
         }
+    }
+
+    public void updateTiles(Tile[][] theWorld){
+        this.theWorld = theWorld;
     }
 
     public Tile move(Action a) {
@@ -51,10 +59,31 @@ public class World {
             }
         } else { // acceleration not applied randomly }
         }
+
         yLocation += (int) curVel.getyVelocity();
         xLocation += (int) curVel.getxVelocity();
+        Tile dest = theWorld[xLocation][yLocation];
 
+        if (dest.type == Tile.TileType.WALL) {
+            dest = closestTile(dest);
+            xLocation = dest.getxLocation();
+            yLocation = dest.getyLocation();
+            curVel.reset();
+        }
         return theWorld[xLocation][yLocation];
+    }
+
+    public Tile closestTile(Tile dest) {
+        Tile closestT = dest;
+        double minDist = Double.MAX_VALUE;
+
+        for (Tile t : safeTiles) {
+            if (Tile.distanceTo(dest, t) < minDist) {
+                closestT = t;
+                minDist = Tile.distanceTo(dest, t);
+            }
+        }
+        return closestT;
     }
 
     public Tile pseudoMove(Action a) {
@@ -81,6 +110,13 @@ public class World {
         }
         int tempY = yLocation + (int) curVel.getyVelocity();
         int tempX = xLocation + (int) curVel.getxVelocity();
+        Tile dest = theWorld[tempX][tempY];
+
+        if (dest.type == Tile.TileType.WALL) {
+            dest = closestTile(dest);
+            tempX = dest.getxLocation();
+            tempY = dest.getyLocation();
+        }
 
         return theWorld[tempX][tempY];
     }

@@ -12,5 +12,6 @@ public class Main {
 				"L-track.txt");
 
 		worldGenerator.generateWorld();
+		System.out.println(worldGenerator);
 	}
 }
