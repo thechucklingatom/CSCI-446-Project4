@@ -115,4 +115,16 @@ public class Action {
             }// end switch
         } // end getDirection()
     } // end enum DIRECTION
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null){
+            return false;
+        }
+        if(o instanceof Action){
+            return dir.equals(((Action) o).dir);
+        }else{
+            return false;
+        }
+    }
 } // end Class Action

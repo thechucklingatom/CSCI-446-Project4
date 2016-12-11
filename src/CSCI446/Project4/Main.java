@@ -13,5 +13,10 @@ public class Main {
 
 		worldGenerator.generateWorld();
 		System.out.println(worldGenerator);
+
+		QLearn qLearn = QLearn.getInstance(worldGenerator.generatedWorld,
+				new State(worldGenerator.generatedWorld.startTile, new Velocity()));
+
+		qLearn.runQLearn();
 	}
 }

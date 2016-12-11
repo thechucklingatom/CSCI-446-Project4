@@ -12,7 +12,7 @@ public class World {
 	private Random rng = new Random();
 	private int tmpX, tmpY;
 	private int startX, startY;
-	private Tile startTile;
+	public Tile startTile;
 	private int xLocation, yLocation;
 	public Tile[][] theWorld;
 	public List<Tile> finishTiles = new ArrayList<>();
@@ -124,7 +124,19 @@ public class World {
 
 		yLocation += (int) curVel.getyVelocity();
 		xLocation += (int) curVel.getxVelocity();
-		Tile dest = theWorld[xLocation][yLocation];
+		if(xLocation < 0){
+			xLocation = 0;
+		}
+		if(yLocation < 0){
+			yLocation = 0;
+		}
+		if(xLocation >= theWorld[0].length){
+			xLocation = theWorld[0].length - 1;
+		}
+		if(yLocation >= theWorld.length){
+			yLocation = theWorld.length - 1;
+		}
+		Tile dest = theWorld[yLocation][xLocation];
 
 		if (dest.type == Tile.TileType.WALL && !crashToStart) {
 			dest = closestTile(dest);
@@ -136,7 +148,7 @@ public class World {
 			yLocation = startY;
 			curVel.reset();
 		}
-		return theWorld[xLocation][yLocation];
+		return theWorld[yLocation][xLocation];
 	}
 
 	public Tile closestTile(Tile dest) {
@@ -193,7 +205,19 @@ public class World {
 		}
 		int tempY = yLocation + (int) tempVelocity.getyVelocity();
 		int tempX = xLocation + (int) tempVelocity.getxVelocity();
-		Tile dest = theWorld[tempX][tempY];
+		if(tempX < 0){
+			tempX = 0;
+		}
+		if(tempY < 0){
+			tempY = 0;
+		}
+		if(tempX >= theWorld[0].length){
+			tempX = theWorld[0].length - 1;
+		}
+		if(tempY >= theWorld.length){
+			tempY = theWorld.length - 1;
+		}
+		Tile dest = theWorld[tempY][tempX];
 
 		if (dest.type == Tile.TileType.WALL) {
 			dest = closestTile(dest);

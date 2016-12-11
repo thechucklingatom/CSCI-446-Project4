@@ -42,16 +42,12 @@ public class QLearn {
         for (Tile[] row : w.theWorld) {
             for (Tile t : row) {
                 for (int i = -5; i <= 5; i++) { // for each x velocity ...
-                    for (int j = -5; j <= 5; i++) { // for each y velocity ...
-                        State s = new State(t, new Velocity(i, j));
+                    for (int j = -5; j <= 5; j++) { // for each y velocity ...
+                        State s = new State(t, new Velocity(i, j)); // create a state for this tile and velocity
                         for (int k = 0; k < Action.DIRECTION.values().length; k++) {
-                            if (k % 2 == 0) { // don't move diagonally
-                                Action a = new Action(k); // the action in a direction or stop
-                                State pos = new State(w.pseudoMove(a), w.curVel); // pseudo-move in that direction
-                                StateAction sa = new StateAction(pos, a);
-                                double utility = pos.getTile().getReward() - s.getTile().getReward();
-                                q.put(sa, utility);
-                            }
+                            Action a = new Action(k); // the action in a direction or stop
+                            StateAction sa = new StateAction(s, a);
+                            q.put(sa, s.getTile().getReward());
                         }
                     }
                 }
@@ -75,11 +71,13 @@ public class QLearn {
     public void runQLearn() {
         int numActions = 0;
         State starting = p; // start at previous location or the start in this case
-        Action a = null;    // obtain new actions based on QLearnAgent(State s);
+        Action a;    // obtain new actions based on QLearnAgent(State s);
         do {
             a = QLearnAgent(starting);
-            starting = new State(w.move(a), w.curVel);
-            numActions++;
+            if (a != null) {
+                starting = new State(w.move(a), w.curVel);
+                numActions++;
+            }
         } while (a != null);
         System.out.println("QLearn finished the race after:\n\t" + numActions + " actions!");
     }
@@ -125,9 +123,14 @@ public class QLearn {
                 // insert new frequency count into our table
                 n.put(new StateAction(e, a), 1);
             }
-            sa = new StateAction(e, a); // this state and our last action
-            double newUtil = q.get(sa) + alpha * (r + maxUtility(e));
-            q.put(sa, newUtil);
+            if (q.containsKey(sa)) {
+                sa = new StateAction(e, a); // this state and our last action
+                double newUtil = q.get(sa) + alpha * (r + maxUtility(e));
+                q.put(sa, newUtil);
+            } else {
+                q.put(sa, 0.0);
+            }
+
             // Q[i, a] = Q[i, a] + alpha(r + max a' (Q[a', j] - Q[a', p]))
         }
         if (e.getTile().type.equals(Tile.TileType.FINISH)) {
@@ -138,7 +141,7 @@ public class QLearn {
         }
         alpha -= 0.001f; // slowly decrease to assist in convergence
         a = explorerFunction(new StateAction(e, maxActionUtility(e)));
-        return null;
+        return a;
     }
 
     private Action explorerFunction(StateAction sa) {
@@ -182,6 +185,7 @@ public class QLearn {
 
     /**
      * Given a state, calculate the largest utility for that state regardless of action
+     *
      * @param e State we are calculating utility for
      * @return double maxUtility
      */
