@@ -28,32 +28,30 @@ public class QLearn {
 
     /**
      * Generate a Mapping of StateAction to utility
+     *
      * @param w the World object we iterate over to generate new states
      */
     private void initializeQ(World w) {
         for (Tile[] row : w.theWorld) {
             for (Tile t : row) {
-                // for each action we have, north, east, south, west, stop,
-                // calculate the utility as the max utility across all actions
-                // Q(i) = max_a Q(a, i)
-                for (int i = -1; i <= 1; i++) { // for each x velocity ...
-                    for (int j = -1; j <= 1; i++) { // for each y velocity ...
+                for (int i = -5; i <= 5; i++) { // for each x velocity ...
+                    for (int j = -5; j <= 5; i++) { // for each y velocity ...
                         State s = new State(t, new Velocity(i, j));
-                        double maxUtility = Double.MIN_VALUE;
-
                         for (int k = 0; k < Action.DIRECTION.values().length; k++) {
-                            Action a = new Action(k); // the action in a direction or stop
-                            State pos = new State(w.pseudoMove(a), w.curVel);
-                            StateAction sa = new StateAction(pos, a);
-
-                            double utility = pos.getTile().getReward() - s.getTile().getReward();
-                            q.put(sa, utility);
+                            if (k % 2 == 0) { // don't move diagonally
+                                Action a = new Action(k); // the action in a direction or stop
+                                State pos = new State(w.pseudoMove(a), w.curVel); // move in that direction
+                                StateAction sa = new StateAction(pos, a);
+                                double utility = pos.getTile().getReward() - s.getTile().getReward();
+                                q.put(sa, utility);
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
     /**
      * Return unique instance of QLearn
@@ -82,11 +80,11 @@ public class QLearn {
          * alpha    := a double between 0 and 1 inclusive that is the learning rate
          *
          function Q-LEARNiNG-AGENT(e) returns an action
-            static: 	Q, a table of action values
-                        N, a table of state-action frequencies
-                        a, the last action taken
-                        p, the previous state visited
-                        r, the reward received in state p
+         static: 	Q, a table of action values
+                    N, a table of state-action frequencies
+                    a, the last action taken
+                    p, the previous state visited
+                    r, the reward received in state p
          j ← STATE[e]
          if i is non-null then
             N[a,p] ← N[a,p] + 1
@@ -118,7 +116,10 @@ public class QLearn {
 
         }
         return null;
+    }
 
+    public double maxUtility(State e) {
+        for
     }
 
 }
