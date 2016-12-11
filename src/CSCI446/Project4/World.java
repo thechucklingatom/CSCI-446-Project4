@@ -46,6 +46,8 @@ public class World {
                 case 6:
                     curVel.setxVelocity(-1.f);
                     break;
+                default:
+                    break; // don't modify velocity on default
             }
         } else { // acceleration not applied randomly }
         }
@@ -53,6 +55,34 @@ public class World {
         xLocation += (int) curVel.getxVelocity();
 
         return theWorld[xLocation][yLocation];
+    }
+
+    public Tile pseudoMove(Action a) {
+        // performs a normal move with output without actually moving the agent
+        double prob = rng.nextDouble();
+        if (prob <= 0.8) {
+            switch (a.getActionInt()) {
+                case 0: // we are moving north
+                    curVel.setyVelocity(1.f);
+                    break;
+                case 2: // we are moving east
+                    curVel.setxVelocity(1.f);
+                    break;
+                case 4:
+                    curVel.setyVelocity(-1.f);
+                    break;
+                case 6:
+                    curVel.setxVelocity(-1.f);
+                    break;
+                default:
+                    break;
+            }
+        } else { // acceleration not applied randomly }
+        }
+        int tempY = yLocation + (int) curVel.getyVelocity();
+        int tempX = xLocation + (int) curVel.getxVelocity();
+
+        return theWorld[tempX][tempY];
     }
 
     public Tile currentTile() {
