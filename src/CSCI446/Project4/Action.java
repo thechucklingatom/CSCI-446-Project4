@@ -10,6 +10,41 @@ public class Action {
         this.dir = dir;
     }
 
+    public Action(int d) {
+        switch(d) {
+            case 0:
+                dir = DIRECTION.NORTH;
+                break;
+            case 1:
+                dir = DIRECTION.NORTHEAST;
+                break;
+            case 2:
+                dir = DIRECTION.EAST;
+                break;
+            case 3:
+                dir =  DIRECTION.SOUTHEAST;
+                break;
+            case 4:
+                dir = DIRECTION.SOUTH;
+                break;
+            case 5:
+                dir = DIRECTION.SOUTHWEST;
+                break;
+            case 6:
+                dir = DIRECTION.WEST;
+                break;
+            case 7:
+                dir = DIRECTION.NORTHWEST;
+                break;
+            case 8:
+                dir = DIRECTION.STOP;
+                break;
+            default:
+                dir = DIRECTION.STOP;
+                break;
+        }
+    }
+
     public void printAction() {
         dir.printAction();
     }
@@ -34,14 +69,14 @@ public class Action {
 
         private int orientation; // int representation of our Directions
 
-        /*
+        /**
         Create a new Direction based on the mapping above
          */
         DIRECTION(int dir) {
             this.orientation = dir%9;
         }// end Direction(int dir)
 
-        /*
+        /**
         Convert this Direction into an Integer based on the mapping above
          */
         public int getInt() {
@@ -52,9 +87,9 @@ public class Action {
             System.out.println("Action: " + this.getDirection());
         } // end printAction()
 
-        /*
+        /**
         Convert this Direction into a String based on the mapping above
-         */
+         **/
         public String getDirection() {
             switch(orientation) {
                 case 0:
