@@ -29,15 +29,17 @@ public class ValueIteration {
 	private double epsilon;
 	private double maxChange = .5;
 	private final double discount = .9;
-	private double reward = -.04;
+	private double reward = -1;
 	private double pOfSucces = .8;
 	private double pOfFail = .2;
 	private World world;
 	private List<State> states;
+	private List<StateAction> policy;
 
 	public ValueIteration(World world) {
 		this.world = world;
 		states = new ArrayList<State>();
+		generateS();
 	}
 
 	public StateAction calculateUtilities(){
@@ -65,20 +67,14 @@ public class ValueIteration {
 	public void generateS(){
 		for(Tile[] tiles : world.theWorld){
 			for(Tile tile : tiles){
-				if(tile.type == Tile.TileType.WALL){
+				if(tile.type == Tile.TileType.WALL || tile.type == Tile.TileType.FINISH){
 					continue;
 				}
-				List<Action> actions = tile.actions;
-				double currentReward = tile.getReward();
-				double currentUtility = tile.getCurrentUtility();
-				if(currentUtility == 0){
-					currentUtility = tile.getReward();
+				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
+					for(int j = -5; j < 6; j++) { //possible yVel
+						states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
+					}
 				}
-
-				for(Action action : actions){
-
-				}
-
 			}//inner for
 		}//outer for
 	}
