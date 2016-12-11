@@ -2,6 +2,7 @@ package CSCI446.Project4;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -11,9 +12,11 @@ import java.util.Set;
  */
 public class QLearn {
 
+    private Random rng = new Random();
     private QLearn instance = null;         // unique instance for Singleton pattern
     private Map<StateAction, Integer> n;    // table mapping StateAction frequencies
     private Map<StateAction, Double> q;     // table mapping StateAction to utility values
+    private final int STATE_OCCURENCE = 5;  // the number of times our agent will enter a state
 
     private World w;            // used to initialize q with all state-action pairs
     private Action a = null;    // last action taken
@@ -118,13 +121,51 @@ public class QLearn {
         } else {
             p = e;
             r = p.getTile().getReward();
-            alpha -= 0.001f; // slowly decrease to assist in convergence
         }
-
+        alpha -= 0.001f; // slowly decrease to assist in convergence
+        a = explorerFunction(new StateAction(e, maxActionUtility(e)));
         return null;
     }
 
-    public double maxUtility(State e) {
+    private Action explorerFunction(StateAction sa) {
+        if (n.containsKey(sa) && n.get(sa) < STATE_OCCURENCE) {
+            return sa.getAction();
+        } else {
+            return new Action(rng.nextInt(9));
+        }
+    }
+
+    private Action maxActionUtility(State e) {
+        double maxUtil = Double.MIN_VALUE;
+        Action rtnActn = null;
+
+        for (int i = 0; i < 9; i++) {
+            StateAction sa = new StateAction(e, new Action(i));
+            double q1, q2; // Q[a', j], Q[a', p]
+            if (q.containsKey(sa)) {
+                q1 = q.get(sa);
+            } else { // assume no utility if not found or initialized
+                q1 = 0.f;
+                q.put(sa, q1);
+            }
+            sa = new StateAction(p, new Action(i));
+            if (q.containsKey(sa)) {
+                q2 = q.get(sa);
+            } else {
+                q2 = 0.f;
+                q.put(sa, q2);
+            }
+
+            double util = q1 - q2;
+            if (util > maxUtil) {
+                maxUtil = util;
+                rtnActn = sa.getAction();
+            }
+        }
+        return rtnActn;
+    }
+
+    private double maxUtility(State e) {
         double maxUtil = Double.MIN_VALUE;
         for (int i = 0; i < 9; i++) { // for each action, find the largest increase in utility
             StateAction sa = new StateAction(e, new Action(i));
