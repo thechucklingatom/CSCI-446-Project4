@@ -1,22 +1,21 @@
 package CSCI446.Project4;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Created by Mathew Gostnell on 12/10/2016.
  *
  * @author Mathew Gostnell
+ * @version v1.2112016
  */
 public class QLearn {
 
-    private Random rng = new Random();
-    private QLearn instance = null;         // unique instance for Singleton pattern
+    private Random rng = new Random();      // used for explorer function to chose random action
+    private static QLearn instance = null;  // unique instance for Singleton pattern
     private Map<StateAction, Integer> n;    // table mapping StateAction frequencies
     private Map<StateAction, Double> q;     // table mapping StateAction to utility values
-    private final int STATE_OCCURENCE = 5;  // the number of times our agent will enter a state
 
     private World w;            // used to initialize q with all state-action pairs
     private Action a = null;    // last action taken
@@ -24,9 +23,14 @@ public class QLearn {
     private double r = 0.f;     // the reward received in state p
     private double alpha = 1.f; // the diminishing alpha to reduce training over time
 
-    private QLearn(State s) {
-        a = new Action(Action.DIRECTION.STOP);
-        p = s;
+    private QLearn(State s, World w) {
+        this.w = w;
+        a = new Action(8);  // default start in the stop action
+        p = s;                 // previous state was the start state
+        n = new HashMap<>();   // instantiate frequency table
+        q = new HashMap<>();   // instantiate StateAction utility value table
+
+        initializeQ(w); // initialize the values for utilities based on the difference of rewards
     }
 
     /**
@@ -43,7 +47,7 @@ public class QLearn {
                         for (int k = 0; k < Action.DIRECTION.values().length; k++) {
                             if (k % 2 == 0) { // don't move diagonally
                                 Action a = new Action(k); // the action in a direction or stop
-                                State pos = new State(w.pseudoMove(a), w.curVel); // move in that direction
+                                State pos = new State(w.pseudoMove(a), w.curVel); // pseudo-move in that direction
                                 StateAction sa = new StateAction(pos, a);
                                 double utility = pos.getTile().getReward() - s.getTile().getReward();
                                 q.put(sa, utility);
@@ -55,20 +59,27 @@ public class QLearn {
         }
     }
 
-
     /**
      * Return unique instance of QLearn
      *
      * @param s the starting state of this agent
      * @return unique instance of QLearn
      */
-    public QLearn getInstance(World w, State s) {
+    public static QLearn getInstance(World w, State s) {
         if (instance == null) {
-            instance = new QLearn(s);
+            instance = new QLearn(s, w);
         }
         return instance;
     }
 
+    public void runQLearn() {
+        State starting = p; // start at previous location or the start in this case
+        Action a = null;    // obtain new actions based on QLearnAgent(State s);
+        do {
+            a = QLearnAgent(starting);
+            starting = new State(w.move(a), w.curVel);
+        } while (a != null);
+    }
 
     /**
      * Calculates the action we should take given our QLearning process
@@ -90,7 +101,7 @@ public class QLearn {
          * [r] := the reward received in state p
 
          j ← STATE[e]
-         if i is non-null then
+         if p is non-null then
          |  N[a,p] ← N[a,p] + 1
          |  Q[a,p] ← Q[a,p] + alpha(r + maxa’ Q[a’,j] - Q[a,p])
          if TERMINAL?[e] then
@@ -128,7 +139,8 @@ public class QLearn {
     }
 
     private Action explorerFunction(StateAction sa) {
-        if (n.containsKey(sa) && n.get(sa) < STATE_OCCURENCE) {
+        int STATE_OCCURRENCE = 5;
+        if (n.containsKey(sa) && n.get(sa) < STATE_OCCURRENCE) {
             return sa.getAction();
         } else {
             return new Action(rng.nextInt(9));
@@ -163,14 +175,19 @@ public class QLearn {
             }
         }
         return rtnActn;
-    }
+    } // end maxActionUtility()
 
+    /**
+     * Given a state, calculate the largest utility for that state regardless of action
+     * @param e State we are calculating utility for
+     * @return double maxUtility
+     */
     private double maxUtility(State e) {
         double maxUtil = Double.MIN_VALUE;
         for (int i = 0; i < 9; i++) { // for each action, find the largest increase in utility
-            StateAction sa = new StateAction(e, new Action(i));
-            double q1, q2; // Q[a', j], Q[a', p]
-            if (q.containsKey(sa)) {
+            StateAction sa = new StateAction(e, new Action(i)); // create new StateAction
+            double q1, q2; // Q[a', j], Q[a', p]                // declare utility variables
+            if (q.containsKey(sa)) { // if we can access the utility of this StateAction, do so
                 q1 = q.get(sa);
             } else { // assume no utility if not found or initialized
                 q1 = 0.f;
@@ -183,13 +200,12 @@ public class QLearn {
                 q2 = 0.f;
                 q.put(sa, q2);
             }
-
+            // track the max and update if necessary
             double util = q1 - q2;
             if (util > maxUtil) {
                 maxUtil = util;
             }
         }
-        return maxUtil;
-    }
-
+        return maxUtil; // return maximum utility
+    } // end maxUtility(...)
 }
