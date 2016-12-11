@@ -14,6 +14,10 @@ public class Action {
         dir.printAction();
     }
 
+    public int getActionInt() {
+        return dir.orientation;
+    }
+
     public enum DIRECTION {
         /*
             0   := NORTH

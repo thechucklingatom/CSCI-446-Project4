@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class Tile {
 
+	private World world;
 	private double reward = 0;
 	private double currentUtility = 0;
 	private double previousUtility = 0;
@@ -24,16 +25,25 @@ public class Tile {
 
 	TileType type;
 
-	public Tile(TileType type, int x, int y){
+	public Tile(World w,TileType type, int x, int y){
+		this.world = w;
 		this.type = type;
 		xLocation = x;
 		yLocation = y;
 		if(type == TileType.WALL){
 			reward = -1;
-		}else{
-			reward = 1;
+		} else if(type == TileType.FINISH) {
+			reward = 255;
+		} else {
+			reward = world.getReward(this);
 		}
 		fillActions();
+	}
+
+	public static double distanceTo(Tile s, Tile t) {
+		double dX = Math.pow(t.xLocation - s.xLocation, 2.0);
+		double dY = Math.pow(t.yLocation - s.yLocation, 2.0);
+		return Math.pow(dX + dY, 0.5);
 	}
 
 	@Override

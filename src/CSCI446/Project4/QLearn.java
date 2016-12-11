@@ -14,6 +14,7 @@ public class QLearn {
     private Map<StateAction, Integer> n;    // table mapping StateAction frequencies
     private Map<StateAction, Double> q;     // table mapping StateAction to utility values
 
+    private World w;            // used to initialize q with all state-action pairs
     private Action a = null;    // last action taken
     private State p = null;     // the previous state visited
     private double r = 0.f;     // the reward received in state p
@@ -24,7 +25,7 @@ public class QLearn {
         p = s;
     }
 
-    private void initializeQ() {
+    private void initializeQ(World w) {
 
     }
 
@@ -33,7 +34,7 @@ public class QLearn {
      * @param s the starting state of this agent
      * @return unique instance of QLearn
      */
-    public QLearn getInstance(State s) {
+    public QLearn getInstance(World w, State s) {
         if (instance == null) {
             instance = new QLearn(s);
         }

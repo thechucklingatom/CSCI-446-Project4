@@ -1,6 +1,7 @@
 package CSCI446.Project4;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,66 +10,106 @@ import java.util.stream.Collectors;
  * Created by thechucklingatom on 12/7/16.
  */
 public class World {
-	private int xLocation, yLocation;
-	public Tile[][] theWorld;
+    private Random rng = new Random();
+    private int xLocation, yLocation;
+    public Tile[][] theWorld;
+    public List<Tile> finishTiles = new ArrayList();
+    public List<Tile> safeTiles = new ArrayList();
+    public Velocity curVel = new Velocity(0, 0);
 
-	public World(Tile[][] theWorld){
-		this.theWorld = theWorld;
-	}
+    public World(Tile[][] theWorld) {
+        this.theWorld = theWorld;
+        for (Tile[] t1 : theWorld) {
+            for (Tile t2 : t1) {
+                if (t2.type == Tile.TileType.FINISH) {
+                    finishTiles.add(t2);
+                } else if (t2.type == Tile.TileType.SAFE) {
+                    safeTiles.add(t2);
+                }
+            }
+        }
+    }
 
-	public Tile currentTile(){
-		return theWorld[xLocation][yLocation];
-	}
+    public Tile move(Action a) {
+        double prob = rng.nextDouble();
+        if (prob <= 0.8) {
+            switch (a.getActionInt()) {
+                case 0: // we are moving north
+                    curVel.setyVelocity(1.f);
+                    break;
+                case 2: // we are moving east
+                    curVel.setxVelocity(1.f);
+                    break;
+                case 4:
+                    curVel.setyVelocity(1.f);
+                    break;
+                case 6:
+                    curVel.setxVelocity(1.f);
+                    break;
+            }
+        } else { // acceleration not applied randomly }
+        }
+        yLocation += (int) curVel.getyVelocity();
+        xLocation += (int) curVel.getxVelocity();
 
-	public List<Tile> safeTiles(){
-		List<Tile> worldList = new ArrayList<>();
-		for(Tile[] tiles : theWorld){
-			worldList.addAll(Arrays.asList(tiles));
-		}
+        return theWorld[xLocation][yLocation];
+    }
 
-		return worldList
-				.stream()
-				.filter(e -> e.type != Tile.TileType.WALL)
-				.collect(Collectors.toList());
-	}
+    public Tile currentTile() {
+        return theWorld[xLocation][yLocation];
+    }
 
-	public List<Tile> getTileNeighbors(Tile tile){
-		List<Tile> toReturn = new ArrayList<>();
-		int tempX = tile.getxLocation();
-		int tempY = tile.getyLocation();
-		//top left
-		if(tempX != 0 && tempY != 0){
-			toReturn.add(theWorld[tempY - 1][tempX - 1]);
-		}
-		//above
-		if(tempY != 0){
-			toReturn.add(theWorld[tempY - 1][tempX]);
-		}
-		//top right
-		if(tempY != 0 && tempX != theWorld[0].length - 1){
-			toReturn.add(theWorld[tempY - 1][tempX + 1]);
-		}
-		//right
-		if(tempX != theWorld[0].length - 1){
-			toReturn.add(theWorld[tempY][tempX + 1]);
-		}
-		//bottom right
-		if(tempY != theWorld.length  - 1 && tempX != theWorld[0].length - 1){
-			toReturn.add(theWorld[tempY + 1][tempX + 1]);
-		}
-		//bottom
-		if(tempY != theWorld.length - 1){
-			toReturn.add(theWorld[tempY + 1][tempX]);
-		}
-		//bottom left
-		if(tempY != theWorld.length - 1 && tempX != 0){
-			toReturn.add(theWorld[tempY + 1][tempX - 1]);
-		}
-		//left
-		if(tempX != 0){
-			toReturn.add(theWorld[tempY][tempX - 1]);
-		}
+    public List<Tile> safeTiles() {
+        return safeTiles;
+    }
 
-		return toReturn;
-	}
+    public double getReward(Tile s) {
+        double minDist = Double.MAX_VALUE;
+        for (Tile sPrime : safeTiles) {
+            if (Tile.distanceTo(s, sPrime) < minDist) {
+                minDist = Tile.distanceTo(s, sPrime);
+            }
+        }
+        return minDist;
+    }
+
+    public List<Tile> getTileNeighbors(Tile tile) {
+        List<Tile> toReturn = new ArrayList<>();
+        int tempX = tile.getxLocation();
+        int tempY = tile.getyLocation();
+        //top left
+        if (tempX != 0 && tempY != 0) {
+            toReturn.add(theWorld[tempY - 1][tempX - 1]);
+        }
+        //above
+        if (tempY != 0) {
+            toReturn.add(theWorld[tempY - 1][tempX]);
+        }
+        //top right
+        if (tempY != 0 && tempX != theWorld[0].length - 1) {
+            toReturn.add(theWorld[tempY - 1][tempX + 1]);
+        }
+        //right
+        if (tempX != theWorld[0].length - 1) {
+            toReturn.add(theWorld[tempY][tempX + 1]);
+        }
+        //bottom right
+        if (tempY != theWorld.length - 1 && tempX != theWorld[0].length - 1) {
+            toReturn.add(theWorld[tempY + 1][tempX + 1]);
+        }
+        //bottom
+        if (tempY != theWorld.length - 1) {
+            toReturn.add(theWorld[tempY + 1][tempX]);
+        }
+        //bottom left
+        if (tempY != theWorld.length - 1 && tempX != 0) {
+            toReturn.add(theWorld[tempY + 1][tempX - 1]);
+        }
+        //left
+        if (tempX != 0) {
+            toReturn.add(theWorld[tempY][tempX - 1]);
+        }
+
+        return toReturn;
+    }
 }

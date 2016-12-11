@@ -4,8 +4,10 @@ package CSCI446.Project4;
  * Created by Thew on 12/10/2016.
  */
 public class Velocity {
-    public double xVelocity;
-    public double yVelocity;
+    private double xVelocity;
+    private double yVelocity;
+    private static double minVal = -1.f;
+    private static double maxVal = 1.f;
 
     public Velocity() {
         this.xVelocity = 0;
@@ -15,6 +17,29 @@ public class Velocity {
     public Velocity(double xVel, double yVel) {
         xVelocity = xVel;
         yVelocity = yVel;
+    }
+
+    public double getxVelocity() { return xVelocity; }
+    public double getyVelocity() { return yVelocity; }
+
+    public void setxVelocity(double xVel) {
+        xVelocity += xVel;
+        if (xVelocity < minVal) {
+            xVelocity = minVal;
+        }
+        if (xVelocity > maxVal) {
+            xVelocity = maxVal;
+        }
+    }
+
+    public void setyVelocity(double yVel) {
+        yVelocity += yVel;
+        if (yVelocity < minVal) {
+            yVelocity = minVal;
+        }
+        if (yVelocity > maxVal) {
+            yVelocity = maxVal;
+        }
     }
 
     @Override

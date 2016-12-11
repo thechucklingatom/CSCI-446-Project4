@@ -38,13 +38,13 @@ public class WorldGenerator {
 				for (int i = 0; i < charArray.length; i++) {
 					Tile toAdd;
 					if(charArray[i] == '#') {
-						toAdd = new Tile(Tile.TileType.WALL, rowCounter, i);
+						toAdd = new Tile(generatedWorld, Tile.TileType.WALL, rowCounter, i);
 					}else if(charArray[i] == 'S'){
-						toAdd = new Tile(Tile.TileType.START, rowCounter, i);
+						toAdd = new Tile(generatedWorld, Tile.TileType.START, rowCounter, i);
 					}else if(charArray[i] == 'F'){
-						toAdd = new Tile(Tile.TileType.FINISH, rowCounter, i);
+						toAdd = new Tile(generatedWorld, Tile.TileType.FINISH, rowCounter, i);
 					}else{
-						toAdd = new Tile(Tile.TileType.SAFE, rowCounter, i);
+						toAdd = new Tile(generatedWorld, Tile.TileType.SAFE, rowCounter, i);
 					}
 
 					world[rowCounter][i] = toAdd;
