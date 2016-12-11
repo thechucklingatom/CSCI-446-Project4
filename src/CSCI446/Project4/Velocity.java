@@ -51,4 +51,13 @@ public class Velocity {
     public String toString() {
         return "Velocity:\n\t<" + xVelocity + ", " + yVelocity + ">";
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Velocity){
+            return (int)xVelocity == (int)((Velocity) o).getxVelocity() &&
+                    (int) yVelocity == (int)((Velocity) o).getyVelocity();
+        }
+        return false;
+    }
 }
