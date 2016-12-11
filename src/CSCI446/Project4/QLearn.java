@@ -141,7 +141,7 @@ public class QLearn {
         }
         alpha -= 0.001f; // slowly decrease to assist in convergence
         a = explorerFunction(new StateAction(e, maxActionUtility(e)));
-        return null;
+        return a;
     }
 
     private Action explorerFunction(StateAction sa) {
