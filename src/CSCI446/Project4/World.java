@@ -52,13 +52,13 @@ public class World {
 
 	public int findPath(int x, int y, List<Tile> checked) {
 		if (x < 0 || y < 0 || x >= theWorld[0].length || y >= theWorld.length) {
-			return Integer.MAX_VALUE - 2; // longest path since it isn't valid
+			return Integer.MAX_VALUE - 2; // make sure we are still in the world
 		} else if (checked.contains(theWorld[y][x])) {
-			return Integer.MAX_VALUE - 2;
+			return Integer.MAX_VALUE - 2; // make sure we haven't been here before
 		} else if (theWorld[y][x].type == Tile.TileType.WALL) {
-			return Integer.MAX_VALUE - 2;
+			return Integer.MAX_VALUE - 2; // make sure we can travel through this Tile
 		} else if (theWorld[y][x].type == Tile.TileType.FINISH) {
-			return 0; // don't include this action in the filePath
+			return 0; // we found our base case, begin returning
 		} else {
 			checked.add(theWorld[y][x]);
 			int north = Math.abs(findPath(x, y + 1, checked) + 1);
