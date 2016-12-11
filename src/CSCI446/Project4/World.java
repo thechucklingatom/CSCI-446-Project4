@@ -124,6 +124,18 @@ public class World {
 
 		yLocation += (int) curVel.getyVelocity();
 		xLocation += (int) curVel.getxVelocity();
+		if(xLocation < 0){
+			xLocation = 0;
+		}
+		if(yLocation < 0){
+			yLocation = 0;
+		}
+		if(xLocation >= theWorld[0].length){
+			xLocation = theWorld[0].length - 1;
+		}
+		if(yLocation >= theWorld.length){
+			yLocation = theWorld.length - 1;
+		}
 		Tile dest = theWorld[xLocation][yLocation];
 
 		if (dest.type == Tile.TileType.WALL && !crashToStart) {
