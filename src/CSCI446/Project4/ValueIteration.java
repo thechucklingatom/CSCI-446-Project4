@@ -1,5 +1,6 @@
 package CSCI446.Project4;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,48 +17,65 @@ public class ValueIteration {
 			delta , the maximum change in the utility of any state in an iteration
 
 	repeat
-		U←U’ ; ←0
+		U←U’ ; delta←0
 		for each state s in S do
-			U’[s]←R(s) + argmax(P(s’ | s,a)U[s’])
-			if U’[s] - U[s] >  then  ←U’[s] - U[s]
-	until delta < e(1 - y)y /
+			U’[s]←R(s) + y argmax(P(s’ | s,a)U[s’])
+			if U’[s] - U[s] > delta then delta ←U’[s] - U[s]
+	until delta < e(1 - y)/y
 	return U
 
 	*/
 
 	private double epsilon;
 	private double maxChange = .5;
-	private double discount = .9;
+	private final double discount = .9;
+	private double reward = -1;
+	private double pOfSucces = .8;
+	private double pOfFail = .2;
 	private World world;
+	private List<State> states;
+	private List<StateAction> policy;
 
 	public ValueIteration(World world) {
 		this.world = world;
+		states = new ArrayList<State>();
+		generateS();
 	}
 
-	public void calculateUtilities(){
+	public StateAction calculateUtilities(){
+		//this is the main iterator that will terminate when the largest change of
+		//utility is below a threshold determined by the discount and epsilon
 		while(!(maxChange < epsilon * (1 - discount) / discount)){
-			maxChange = .5;
+			maxChange = 0;
+			double oldUtility = 0;
+			for(State s : states){
+				double newUtility = reward + (discount * maxUtilAction(s));
+				if(newUtility - oldUtility > maxChange){
+					maxChange = newUtility - oldUtility;
+				}
+			}
 
-			for(Tile[] tiles : world.theWorld){
-				for(Tile tile : tiles){
-					if(tile.type == Tile.TileType.WALL){
-						continue;
-					}
-					List<Action> actions = tile.actions;
-					double currentReward = tile.getReward();
-					double currentUtility = tile.getCurrentUtility();
-					if(currentUtility == 0){
-						currentUtility = tile.getReward();
-					}
-
-					for(Action action : actions){
-
-					}
-
-				}//inner for
-			}//outer for
 		}//while
+		return null;
+	}
+	//a lot of calculations and calls needed for this, so separated into new method
+	public double maxUtilAction(State s){
+
+		return 0;
 	}
 
-
+	public void generateS(){
+		for(Tile[] tiles : world.theWorld){
+			for(Tile tile : tiles){
+				if(tile.type == Tile.TileType.WALL || tile.type == Tile.TileType.FINISH){
+					continue;
+				}
+				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
+					for(int j = -5; j < 6; j++) { //possible yVel
+						states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
+					}
+				}
+			}//inner for
+		}//outer for
+	}
 }
