@@ -46,7 +46,6 @@ public class WorldGenerator {
 					}else{
 						toAdd = new Tile(generatedWorld, Tile.TileType.SAFE, rowCounter, i);
 					}
-
 					world[rowCounter][i] = toAdd;
 				}
 				rowCounter++;

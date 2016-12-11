@@ -41,10 +41,10 @@ public class World {
                     curVel.setxVelocity(1.f);
                     break;
                 case 4:
-                    curVel.setyVelocity(1.f);
+                    curVel.setyVelocity(-1.f);
                     break;
                 case 6:
-                    curVel.setxVelocity(1.f);
+                    curVel.setxVelocity(-1.f);
                     break;
             }
         } else { // acceleration not applied randomly }
