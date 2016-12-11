@@ -17,6 +17,10 @@ public class World {
     public List<Tile> safeTiles = new ArrayList();
     public Velocity curVel = new Velocity(0, 0);
 
+    public World(){
+
+    }
+
     public World(Tile[][] theWorld) {
         this.theWorld = theWorld;
         for (Tile[] t1 : theWorld) {
@@ -28,6 +32,10 @@ public class World {
                 }
             }
         }
+    }
+
+    public void updateTiles(Tile[][] theWorld){
+        this.theWorld = theWorld;
     }
 
     public Tile move(Action a) {
