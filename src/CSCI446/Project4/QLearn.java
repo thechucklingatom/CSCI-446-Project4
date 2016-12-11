@@ -24,6 +24,10 @@ public class QLearn {
         p = s;
     }
 
+    private void initializeQ() {
+
+    }
+
     /**
      * Return unique instance of QLearn
      * @param s the starting state of this agent
