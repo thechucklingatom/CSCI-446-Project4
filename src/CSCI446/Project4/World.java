@@ -175,6 +175,10 @@ public class World {
 		return minDist;
 	}
 
+	public Tile getTileAtLocation(int x, int y){
+		return theWorld[y][x];
+	}
+
 	public List<Tile> getTileNeighbors(Tile tile) {
 		List<Tile> toReturn = new ArrayList<>();
 		int tempX = tile.getxLocation();
