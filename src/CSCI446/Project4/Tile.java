@@ -35,7 +35,7 @@ public class Tile {
 		} else if(type == TileType.FINISH) {
 			reward = 255;
 		} else {
-			reward = world.getReward(this);
+			reward = 0; // reward calculated in later case
 		}
 		fillActions();
 	}
