@@ -34,7 +34,9 @@ public class ValueIteration {
 	private double pOfFail = 0;
 	private World world;
 	private List<State> states;
+	private List<Double> utilities;
 	private List<StateAction> policy;
+	private List<Tile> walls;
 
 	public ValueIteration(World world) {
 		this.world = world;
@@ -76,8 +78,10 @@ public class ValueIteration {
 
 	//a lot of calculations and calls needed for this, so separated into new method
 	public double maxUtilAction(State s){
+
 		for(int i = -1; i < 2; i++){ //iterate through the possible actions
 			for(int j = -1; j < 2; j++){
+				//find the tile that corresponds to that stateaction pair
 
 			}
 		}
@@ -88,11 +92,15 @@ public class ValueIteration {
 		for(Tile[] tiles : world.theWorld){
 			for(Tile tile : tiles){
 				if(tile.type == Tile.TileType.WALL || tile.type == Tile.TileType.FINISH){
+					if(tile.type == Tile.TileType.WALL){
+						walls.add(tile);
+					}
 					continue;
 				}
 				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 					for(int j = -5; j < 6; j++) { //possible yVel
 						states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
+						utilities.add(0.0);
 					}
 				}
 			}//inner for
