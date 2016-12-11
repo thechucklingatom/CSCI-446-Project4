@@ -71,8 +71,8 @@ public class World {
 			return 0; // don't include this action in the filePath
 		} else {
 			checked.add(theWorld[y][x]);
-			int north = Math.abs(findPath(x, y + 1, checked) + 1);
-			int south = Math.abs(findPath(x, y - 1, checked) + 1);
+			int south = Math.abs(findPath(x, y + 1, checked) + 1);
+			int north = Math.abs(findPath(x, y - 1, checked) + 1);
 			int east = Math.abs(findPath(x + 1, y, checked) + 1);
 			int west = Math.abs(findPath(x - 1, y, checked) + 1);
 
@@ -89,16 +89,32 @@ public class World {
 		if (prob <= 0.8) {
 			switch (a.getActionInt()) {
 				case 0: // we are moving north
-					curVel.setyVelocity(1.f);
+					curVel.setyVelocity(-1.f);
+					break;
+				case 1: //we are moving
+					curVel.setxVelocity(1.f);
+					curVel.setyVelocity(-1.f);
 					break;
 				case 2: // we are moving east
 					curVel.setxVelocity(1.f);
 					break;
+				case 3:
+					curVel.setxVelocity(1.f);
+					curVel.setyVelocity(1.f);
+					break;
 				case 4:
-					curVel.setyVelocity(-1.f);
+					curVel.setyVelocity(1.f);
+					break;
+				case 5:
+					curVel.setxVelocity(-1.f);
+					curVel.setyVelocity(1.f);
 					break;
 				case 6:
 					curVel.setxVelocity(-1.f);
+					break;
+				case 7:
+					curVel.setxVelocity(-1.f);
+					curVel.setyVelocity(-1.f);
 					break;
 				default:
 					break; // don't modify velocity on default
@@ -142,16 +158,32 @@ public class World {
 		if (prob <= 0.8) {
 			switch (a.getActionInt()) {
 				case 0: // we are moving north
-					curVel.setyVelocity(1.f);
+					curVel.setyVelocity(-1.f);
+					break;
+				case 1: //we are moving
+					curVel.setxVelocity(1.f);
+					curVel.setyVelocity(-1.f);
 					break;
 				case 2: // we are moving east
 					curVel.setxVelocity(1.f);
 					break;
+				case 3:
+					curVel.setxVelocity(1.f);
+					curVel.setyVelocity(1.f);
+					break;
 				case 4:
-					curVel.setyVelocity(-1.f);
+					curVel.setyVelocity(1.f);
+					break;
+				case 5:
+					curVel.setxVelocity(-1.f);
+					curVel.setyVelocity(1.f);
 					break;
 				case 6:
 					curVel.setxVelocity(-1.f);
+					break;
+				case 7:
+					curVel.setxVelocity(-1.f);
+					curVel.setyVelocity(-1.f);
 					break;
 				default:
 					break;
