@@ -6,8 +6,8 @@ package CSCI446.Project4;
 public class Velocity {
     private double xVelocity;
     private double yVelocity;
-    private static double minVal = -1.f;
-    private static double maxVal = 1.f;
+    private static double minVal = -5.f;
+    private static double maxVal = 5.f;
 
     public Velocity() {
         this.xVelocity = 0;
