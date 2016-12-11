@@ -221,7 +221,7 @@ public class World {
 		return minDist;
 	}
 
-	public Tile getTileAtLocation(int x, int y){
+	public Tile getTileAtLocation(int x, int y) {
 		return theWorld[y][x];
 	}
 
@@ -263,5 +263,45 @@ public class World {
 		}
 
 		return toReturn;
+	}
+
+	public boolean moveGoesThroughFinish() {
+		int tempX = (int) curVel.getxVelocity();
+		int tempY = (int) curVel.getyVelocity();
+		if (tempY < 0) {
+			for (int i = tempY; i < 0; i++) {
+				if (tempX < 0) {
+					for (int j = 1; j <= tempX; j++) {
+						if (theWorld[i][j].type == Tile.TileType.FINISH) {
+							return true;
+						}
+					}
+				} else {
+					for (int j = tempX; j < 0; j++) {
+						if (theWorld[i][j].type == Tile.TileType.FINISH) {
+							return true;
+						}
+					}
+				}
+			}
+		} else {
+			for (int i = 1; i <= tempY; i++) {
+				if (tempX < 0) {
+					for (int j = 1; j <= tempX; j++) {
+						if (theWorld[i][j].type == Tile.TileType.FINISH) {
+							return true;
+						}
+					}
+				} else {
+					for (int j = tempX; j < 0; j++) {
+						if (theWorld[i][j].type == Tile.TileType.FINISH) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }
