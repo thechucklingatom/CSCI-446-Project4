@@ -10,13 +10,39 @@ import java.util.Set;
  */
 public class QLearn {
 
+    private QLearn instance = null;         // unique instance for Singleton pattern
     private Map<StateAction, Integer> n;    // table mapping StateAction frequencies
+    private Map<StateAction, Double> q;     // table mapping StateAction to utility values
+
     private Action a = null;    // last action taken
     private State p = null;     // the previous state visited
+    private double r = 0.f;     // the reward received in state p
+    private double alpha = 1.f; // the diminishing alpha to reduce training over time
 
-    private double r = 0.f;
-    private double a = 1.f;
+    private QLearn(State s) {
+        a = new Action(Action.DIRECTION.STOP);
+        p = s;
+    }
 
+    /**
+     * Return unique instance of QLearn
+     * @param s the starting state of this agent
+     * @return unique instance of QLearn
+     */
+    public QLearn getInstance(State s) {
+        if (instance == null) {
+            instance = new QLearn(s);
+        }
+        return  instance;
+    }
+
+
+    /**
+     * Calculates the action we should take given our QLearning process
+     * @param e the event our agent just transitioned into
+     * @param j the action our agent just took to transition into State e
+     * @return the next Action our agent should take given our policy
+     */
     public Action QLearnAgent(State e, Action j) {
         if (p != null) {
             // N[p, a] <- N[p, a] + 1

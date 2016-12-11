@@ -24,8 +24,9 @@ public class Action {
             5   := SOUTHWEST
             6   := WEST
             7   := NORTHWEST
+            8   := STOP
          */
-        NORTH(0), NORTHEAST(1), EAST(2), SOUTHEAST(3), SOUTH(4),  SOUTHWEST(5), WEST(6), NORTHWEST(7);
+        NORTH(0), NORTHEAST(1), EAST(2), SOUTHEAST(3), SOUTH(4),  SOUTHWEST(5), WEST(6), NORTHWEST(7), STOP(8);
 
         private int orientation; // int representation of our Directions
 
@@ -33,7 +34,7 @@ public class Action {
         Create a new Direction based on the mapping above
          */
         DIRECTION(int dir) {
-            this.orientation = dir%8;
+            this.orientation = dir%9;
         }// end Direction(int dir)
 
         /*
@@ -68,6 +69,8 @@ public class Action {
                     return "WEST";
                 case 7:
                     return "NORTHWEST";
+                case 8:
+                    return "STOP";
                 default:
                     return ""; // this case should never happen due to modulo in constructor
             }// end switch
