@@ -22,6 +22,9 @@ public class StateAction {
 
     @Override
     public boolean equals(Object o){
+        if(o == null){
+            return false;
+        }
         if(o instanceof StateAction){
             return s.equals(((StateAction) o).getState()) && a.equals(((StateAction) o).getAction());
         }else{

@@ -136,7 +136,7 @@ public class World {
 		if(yLocation >= theWorld.length){
 			yLocation = theWorld.length - 1;
 		}
-		Tile dest = theWorld[xLocation][yLocation];
+		Tile dest = theWorld[yLocation][xLocation];
 
 		if (dest.type == Tile.TileType.WALL && !crashToStart) {
 			dest = closestTile(dest);
@@ -148,7 +148,7 @@ public class World {
 			yLocation = startY;
 			curVel.reset();
 		}
-		return theWorld[xLocation][yLocation];
+		return theWorld[yLocation][xLocation];
 	}
 
 	public Tile closestTile(Tile dest) {
@@ -217,7 +217,7 @@ public class World {
 		if(tempY >= theWorld.length){
 			tempY = theWorld.length - 1;
 		}
-		Tile dest = theWorld[tempX][tempY];
+		Tile dest = theWorld[tempY][tempX];
 
 		if (dest.type == Tile.TileType.WALL) {
 			dest = closestTile(dest);
