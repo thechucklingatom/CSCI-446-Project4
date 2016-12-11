@@ -26,7 +26,15 @@ public class StateAction {
             return false;
         }
         if(o instanceof StateAction){
-            return s.equals(((StateAction) o).getState()) && a.equals(((StateAction) o).getAction());
+        	if(a != null && s != null) {
+				return s.equals(((StateAction) o).getState()) && a.equals(((StateAction) o).getAction());
+			}else if (a != null){
+				return a.equals(((StateAction) o).getAction()) && ((StateAction) o).getState() == null;
+			}else if (s != null){
+				return s.equals(((StateAction) o).getState()) && ((StateAction) o).getAction() == null;
+			}else{
+				return ((StateAction) o).getState() == null && ((StateAction) o).getAction() == null;
+			}
         }else{
             return false;
         }
