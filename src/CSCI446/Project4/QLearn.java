@@ -79,7 +79,7 @@ public class QLearn {
         int numActions = 0;
         State starting = p; // start at previous location or the start in this case
         Action a;    // obtain new actions based on QLearnAgent(State s);
-        System.out.println("Starting State, and Action:\n\t" + p.toString() + "\nAction:\t" + Action.DIRECTION.STOP.toString() + "\n");
+        System.out.printf("%-10s\t%8s\t%10s\n\n", "Action", "Position" ,"Velocity");
         do {
             a = QLearnAgent(starting);
             if (a != null) {
