@@ -43,6 +43,10 @@ public class ValueIteration {
 	public ValueIteration(World world) {
 		this.world = world;
 		states = new ArrayList<>();
+		utilities = new ArrayList<>();
+		maxActions = new ArrayList<>();
+		policy = new ArrayList<>();
+		walls = new ArrayList<>();
 		generateS();
 	}
 
