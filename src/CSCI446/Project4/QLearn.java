@@ -1,8 +1,6 @@
 package CSCI446.Project4;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Mathew Gostnell on 12/10/2016.
@@ -14,8 +12,14 @@ public class QLearn {
 
     private Random rng = new Random();      // used for explorer function to chose random action
     private static QLearn instance = null;  // unique instance for Singleton pattern
+
     private Map<StateAction, Integer> n;    // table mapping StateAction frequencies
+    private List<StateAction> nPairs = new ArrayList();
+    private List<Integer> nFreq = new ArrayList();
+
     private Map<StateAction, Double> q;     // table mapping StateAction to utility values
+    private List<StateAction> qPairs = new ArrayList();
+    private List<Double> qUtil = new ArrayList();
 
     private World w;            // used to initialize q with all state-action pairs
     private Action a = null;    // last action taken
@@ -27,8 +31,8 @@ public class QLearn {
         this.w = w;
         a = new Action(8);  // default start in the stop action
         p = s;                 // previous state was the start state
-        n = new HashMap<>();   // instantiate frequency table
-        q = new HashMap<>();   // instantiate StateAction utility value table
+        //n = new HashMap<>();   // instantiate frequency table
+        //q = new HashMap<>();   // instantiate StateAction utility value table
 
         initializeQ(w); // initialize the values for utilities based on the difference of rewards
     }
@@ -47,7 +51,10 @@ public class QLearn {
                         for (int k = 0; k < Action.DIRECTION.values().length; k++) {
                             Action a = new Action(k); // the action in a direction or stop
                             StateAction sa = new StateAction(s, a);
-                            q.put(sa, s.getTile().getReward());
+                            //q.put(sa, s.getTile().getReward());
+                            qPairs.add(sa);
+                            qUtil.add(s.getTile().getReward());
+                            // add together to maintain matching indexes
                         }
                     }
                 }
@@ -95,11 +102,11 @@ public class QLearn {
          *
          function Q-LEARNiNG-AGENT(e) returns an action
          static:
-         * [Q] := a table of action values
-         * [N] := a table of state-action frequencies
-         * [a] := the last action taken
-         * [p] := the previous state visited
-         * [r] := the reward received in state p
+         *      [Q] := a table of action values
+         *      [N] := a table of state-action frequencies
+         *      [a] := the last action taken
+         *      [p] := the previous state visited
+         *      [r] := the reward received in state p
 
          j ← STATE[e]
          if p is non-null then
@@ -110,28 +117,36 @@ public class QLearn {
          else
          |  p ← j
          |  r ← REWARD[e]
-         a ← arg maxa’, f(Q[a',j], N[a',j])
+         a ← arg max a’, f(Q[a',j], N[a',j])
          return a
          */
         if (p != null) {
             // N[p, a] <- N[p, a] + 1
             StateAction sa = new StateAction(p, a);
-            if (n.containsKey(sa)) {
+            if (nPairs.contains(sa)/*n.containsKey(sa)*/) {
                 // update the existing state-action frequency
-                n.put(sa, n.get(sa) + 1);
+                //n.put(sa, n.get(sa) + 1);
+                int sharedIndex = nPairs.indexOf(sa);
+                int originalFreq = nFreq.get(sharedIndex);
+                nFreq.set(sharedIndex, originalFreq + 1);
             } else {
                 // insert new frequency count into our table
-                n.put(new StateAction(e, a), 1);
+                //n.put(new StateAction(e, a), 1);
+                nPairs.add(sa);
+                nFreq.add(1);
             }
-            if (q.containsKey(sa)) {
-                sa = new StateAction(e, a); // this state and our last action
-                double newUtil = q.get(sa) + alpha * (r + maxUtility(e));
-                q.put(sa, newUtil);
+            if (qPairs.contains(sa)/*q.containsKey(sa)*/) {
+                //sa = new StateAction(e, a); // this state and our last action
+                // double newUtil = q.get(sa) + alpha * (r + maxUtility(e));
+                // q.put(sa, newUtil);
+                int sharedIndex = qPairs.indexOf(sa);
+                double newUtil = qUtil.get(sharedIndex) + (alpha * (r + maxUtility(e)));
+                qUtil.set(sharedIndex, newUtil);
             } else {
-                q.put(sa, 0.0);
+                // q.put(sa, 0.0);
+                qPairs.add(sa);
+                qUtil.add(0.0);
             }
-
-            // Q[i, a] = Q[i, a] + alpha(r + max a' (Q[a', j] - Q[a', p]))
         }
         if (e.getTile().type.equals(Tile.TileType.FINISH)) {
             p = null;
@@ -139,14 +154,19 @@ public class QLearn {
             p = e;
             r = p.getTile().getReward();
         }
-        alpha -= 0.001f; // slowly decrease to assist in convergence
+        // decrement alpha over time
+        if (alpha > 0.0001) {
+            alpha -= 0.0001;
+        } else {
+            alpha = 0.0001;
+        }
         a = explorerFunction(new StateAction(e, maxActionUtility(e)));
         return a;
     }
 
     private Action explorerFunction(StateAction sa) {
         int STATE_OCCURRENCE = 5;
-        if (n.containsKey(sa) && n.get(sa) < STATE_OCCURRENCE) {
+        if (nPairs.contains(sa) /*n.containsKey(sa)*/ && nFreq.get(nPairs.indexOf(sa)) /*n.get(sa)*/ < STATE_OCCURRENCE) {
             return sa.getAction();
         } else {
             return new Action(rng.nextInt(9));
@@ -160,18 +180,24 @@ public class QLearn {
         for (int i = 0; i < 9; i++) {
             StateAction sa = new StateAction(e, new Action(i));
             double q1, q2; // Q[a', j], Q[a', p]
-            if (q.containsKey(sa)) {
-                q1 = q.get(sa);
+            if (qPairs.contains(sa) /*q.containsKey(sa)*/) {
+                //q1 = q.get(sa);
+                q1 = qUtil.get(qPairs.indexOf(sa));
             } else { // assume no utility if not found or initialized
                 q1 = 0.f;
-                q.put(sa, q1);
+                // q.put(sa, q1);
+                qUtil.add(q1);
+                qPairs.add(sa);
             }
             sa = new StateAction(p, new Action(i));
-            if (q.containsKey(sa)) {
-                q2 = q.get(sa);
+            if (qPairs.contains(sa) /*q.containsKey(sa)*/) {
+                //q2 = q.get(sa);
+                q2 = qUtil.get(qPairs.indexOf(sa));
             } else {
                 q2 = 0.f;
-                q.put(sa, q2);
+                //q.put(sa, q2);
+                qUtil.add(q2);
+                qPairs.add(sa);
             }
 
             double util = q1 - q2;
@@ -194,18 +220,24 @@ public class QLearn {
         for (int i = 0; i < 9; i++) { // for each action, find the largest increase in utility
             StateAction sa = new StateAction(e, new Action(i)); // create new StateAction
             double q1, q2; // Q[a', j], Q[a', p]                // declare utility variables
-            if (q.containsKey(sa)) { // if we can access the utility of this StateAction, do so
-                q1 = q.get(sa);
+            if (qPairs.contains(sa) /*q.containsKey(sa)*/) { // if we can access the utility of this StateAction, do so
+                //q1 = q.get(sa);
+                q1 = qUtil.get(qPairs.indexOf(sa));
             } else { // assume no utility if not found or initialized
                 q1 = 0.f;
-                q.put(sa, q1);
+                //q.put(sa, q1);
+                qPairs.add(sa);
+                qUtil.add(q1);
             }
             sa = new StateAction(p, new Action(i));
-            if (q.containsKey(sa)) {
-                q2 = q.get(sa);
+            if (qPairs.contains(sa) /*q.containsKey(sa)*/) {
+                //q2 = q.get(sa);
+                q2 = qUtil.get(qPairs.indexOf(sa));
             } else {
                 q2 = 0.f;
-                q.put(sa, q2);
+                //q.put(sa, q2);
+                qPairs.add(sa);
+                qUtil.add(q2);
             }
             // track the max and update if necessary
             double util = q1 - q2;
