@@ -79,14 +79,15 @@ public class QLearn {
         int numActions = 0;
         State starting = p; // start at previous location or the start in this case
         Action a;    // obtain new actions based on QLearnAgent(State s);
-        System.out.println("Starting State, and Action:\n\t" + p.toString() + "\nAction:\t" + Action.DIRECTION.STOP.toString() + "\n");
+        System.out.printf("%-10s\t%8s\t%10s\n\n", "Action", "Position" ,"Velocity");
         do {
             a = QLearnAgent(starting);
             if (a != null) {
-                a.printAction();
+                //a.printAction();
                 starting = new State(w.move(a), w.curVel);
-                System.out.println("\tPosition\t<" + w.currentTile().getxLocation() + ", " + w.currentTile().getyLocation() + ">");
-                System.out.println("\tVelocity\t<" + w.curVel.getxVelocity() + ", " + w.curVel.getyVelocity() + ">\n");
+                System.out.printf("%-10s\t<%-2d, %2d>\t<%+2.1f, %+2.1f>\n", a.toString(), w.currentTile().getxLocation(), w.currentTile().getyLocation(), w.curVel.getxVelocity(), w.curVel.getyVelocity());
+                //System.out.println("\tPosition\t<" + w.currentTile().getxLocation() + ", " + w.currentTile().getyLocation() + ">");
+                //System.out.println("\tVelocity\t<" + w.curVel.getxVelocity() + ", " + w.curVel.getyVelocity() + ">\n");
                 numActions++;
             }
         } while (a != null);

@@ -45,6 +45,10 @@ public class Action {
         }
     }
 
+    public String toString() {
+        return dir.toString();
+    }
+
     public void printAction() {
         dir.printAction();
     }
