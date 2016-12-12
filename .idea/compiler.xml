@@ -12,8 +12,8 @@
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
     <bytecodeTargetLevel>
-      <module name="CSCI-446-Project4_main" target="1.5" />
-      <module name="CSCI-446-Project4_test" target="1.5" />
+      <module name="CSCI-446-Project4_main" target="1.8" />
+      <module name="CSCI-446-Project4_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

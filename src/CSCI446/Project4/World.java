@@ -225,7 +225,7 @@ public class World {
 			tempY = dest.getyLocation();
 		}
 
-		return theWorld[tempX][tempY];
+		return theWorld[tempY][tempX];
 	}
 
 	public Tile currentTile() {
