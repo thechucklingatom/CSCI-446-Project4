@@ -351,7 +351,7 @@ public class World {
                 if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
 					prevX = incX;
 					prevY = incY;
-					if(curX + incX < 0 || curX + incX >= theWorld.length || curY + incY< 0 || curY + incY >= theWorld[0].length){}
+					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
 					else {
 						Tile newTile = theWorld[curY + incY][curX + incX];
 						tiles.add(newTile);
