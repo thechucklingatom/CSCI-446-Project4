@@ -74,11 +74,11 @@ public class ValueIteration {
 	public void findP(){
 		int numFail = 0;
 		int numTotal = 0;
-		Tile curTile = world.currentTile();
+		Tile curTile = world.startTile;
 		for(int i = 0; i < 1000; i++) {
 			numTotal++;
 			Tile tempTile = world.pseudoMove(new Action(1));
-			if (curTile == tempTile) {
+			if (curTile.equals(tempTile)) {
 				numFail++;
 			}
 		}
