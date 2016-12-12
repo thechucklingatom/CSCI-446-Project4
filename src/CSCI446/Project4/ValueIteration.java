@@ -113,6 +113,9 @@ public class ValueIteration {
 		Action maxA = createAction(0,0);
 		Velocity curVel = s.getVelocity();
 		Tile curTile = s.getTile();
+		if(curTile.type == Tile.TileType.FINISH){
+			return 1.0;
+		}
 		int curX = curTile.getxLocation();
 		int curY = curTile.getyLocation();
 		double curVelX = curVel.getxVelocity();
@@ -121,6 +124,7 @@ public class ValueIteration {
 		int curStateInd = findState(curX, curY, curVelX, curVelY);
 		State nextState = world.finishDetection(curX, curY, curVelX, curVelY);
 		Tile nextTile = nextState.getTile();
+
 		Velocity nextVelocity = nextState.getVelocity();
 		int nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
 		curIndex = curStateInd;
