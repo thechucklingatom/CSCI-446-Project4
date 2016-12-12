@@ -229,7 +229,7 @@ public class World {
 	}
 
 	public Tile currentTile() {
-		return theWorld[xLocation][yLocation];
+		return theWorld[yLocation][xLocation];
 	}
 
 	public List<Tile> safeTiles() {
