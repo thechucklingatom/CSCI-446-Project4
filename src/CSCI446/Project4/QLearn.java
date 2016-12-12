@@ -79,10 +79,14 @@ public class QLearn {
         int numActions = 0;
         State starting = p; // start at previous location or the start in this case
         Action a;    // obtain new actions based on QLearnAgent(State s);
+        System.out.println("Starting State, and Action:\n\t" + p.toString() + "\nAction:\t" + Action.DIRECTION.STOP.toString() + "\n");
         do {
             a = QLearnAgent(starting);
             if (a != null) {
+                a.printAction();
                 starting = new State(w.move(a), w.curVel);
+                System.out.println("\tPosition\t<" + w.currentTile().getxLocation() + ", " + w.currentTile().getyLocation() + ">");
+                System.out.println("\tVelocity\t<" + w.curVel.getxVelocity() + ", " + w.curVel.getyVelocity() + ">\n");
                 numActions++;
             }
         } while (a != null);
@@ -150,6 +154,7 @@ public class QLearn {
         }
         if (e.getTile().type.equals(Tile.TileType.FINISH)) {
             p = null;
+            return null; // we found our finish, terminate learning
         } else {
             p = e;
             r = p.getTile().getReward();
