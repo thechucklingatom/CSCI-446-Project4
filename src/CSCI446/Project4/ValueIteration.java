@@ -77,7 +77,7 @@ public class ValueIteration {
 		Tile curTile = world.startTile;
 		for(int i = 0; i < 1000; i++) {
 			numTotal++;
-			Tile tempTile = world.pseudoMove(new Action(1));
+			Tile tempTile = world.pseudoMove(new Action(2));
 			if (curTile.equals(tempTile)) {
 				numFail++;
 			}
