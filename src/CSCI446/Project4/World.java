@@ -221,10 +221,14 @@ public class World {
 		}
 		Tile dest = theWorld[tempY][tempX];
 
-		if (dest.type == Tile.TileType.WALL) {
+		if (dest.type == Tile.TileType.WALL && !crashToStart) {
 			dest = closestTile(dest);
 			tempX = dest.getxLocation();
 			tempY = dest.getyLocation();
+		}else{
+			tempX = startX;
+			tempY = startY;
+			curVel.reset();
 		}
 
 		return theWorld[tempY][tempX];
