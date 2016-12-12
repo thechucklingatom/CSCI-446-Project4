@@ -6,6 +6,7 @@ package CSCI446.Project4;
 public class State {
     private final Tile t;
     private final Velocity v;
+    private boolean visited = false;
 
     public State(Tile t, Velocity v) {
         this.t = t;
@@ -14,6 +15,8 @@ public class State {
 
     public Tile getTile() { return t; }
     public Velocity getVelocity() { return v; }
+    public boolean isVisited(){return visited;}
+    public void setVisited(boolean b){visited = b;}
 
     @Override
     public String toString() {
