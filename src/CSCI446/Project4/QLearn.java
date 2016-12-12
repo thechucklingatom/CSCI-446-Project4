@@ -83,10 +83,11 @@ public class QLearn {
         do {
             a = QLearnAgent(starting);
             if (a != null) {
-                a.printAction();
+                //a.printAction();
                 starting = new State(w.move(a), w.curVel);
-                System.out.println("\tPosition\t<" + w.currentTile().getxLocation() + ", " + w.currentTile().getyLocation() + ">");
-                System.out.println("\tVelocity\t<" + w.curVel.getxVelocity() + ", " + w.curVel.getyVelocity() + ">\n");
+                System.out.printf("%-10s\t<%-2d, %2d>\t<%+2.1f, %+2.1f>\n", a.toString(), w.currentTile().getxLocation(), w.currentTile().getyLocation(), w.curVel.getxVelocity(), w.curVel.getyVelocity());
+                //System.out.println("\tPosition\t<" + w.currentTile().getxLocation() + ", " + w.currentTile().getyLocation() + ">");
+                //System.out.println("\tVelocity\t<" + w.curVel.getxVelocity() + ", " + w.curVel.getyVelocity() + ">\n");
                 numActions++;
             }
         } while (a != null);
