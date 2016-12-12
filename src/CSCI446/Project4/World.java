@@ -53,6 +53,8 @@ public class World {
 		startTile = startTiles.get(rng.nextInt(startTiles.size()));
 		startX = startTile.getxLocation();
 		startY = startTile.getyLocation();
+		xLocation = startX;
+		yLocation = startY;
 	}
 
 	public void setReward(Tile s) {
@@ -167,7 +169,7 @@ public class World {
 	public Tile pseudoMove(Action a) {
 		// performs a normal move with output without actually moving the agent
 		double prob = rng.nextDouble();
-		Velocity tempVelocity = curVel;
+		Velocity tempVelocity = new Velocity(curVel.getxVelocity(), curVel.getyVelocity());
 		if (prob <= 0.8) {
 			switch (a.getActionInt()) {
 				case 0: // we are moving north
@@ -225,11 +227,11 @@ public class World {
 			tempY = dest.getyLocation();
 		}
 
-		return theWorld[tempX][tempY];
+		return theWorld[tempY][tempX];
 	}
 
 	public Tile currentTile() {
-		return theWorld[xLocation][yLocation];
+		return theWorld[yLocation][xLocation];
 	}
 
 	public List<Tile> safeTiles() {
@@ -331,5 +333,112 @@ public class World {
 		}
 
 		return false;
+	}
+
+	//called before a findState() call in maxUtilAction
+    //this gives the TARGET STATE
+    //velocity HAS HAD ACC APPLIED
+	public State finishDetection(int curX, int curY, double velX, double velY){
+        //find the tiles that the car will pass through
+        List<Tile> tiles = new ArrayList<>();
+        double slope = velY/velX;
+        int prevX = curX;
+        int prevY = curY;
+        boolean containsFinish = false;
+        if(velX >= 0) {
+            for (double x = .2; x <= velX; x = x + .2) {
+                double y = slope * x;
+                int incX = (int) x;
+                int incY = (int) y;
+                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+					prevX = incX;
+					prevY = incY;
+					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
+					else {
+						Tile newTile = theWorld[curY + incY][curX + incX];
+						tiles.add(newTile);
+						if (newTile.type == Tile.TileType.FINISH) {
+							containsFinish = true;
+							x = velX + 1;
+						}
+					}
+                }
+            }
+        } else {
+            for (double x = -.2; x >= velX; x = x - .2) {
+                double y = slope * x;
+                int incX = (int) x;
+                int incY = (int) y;
+                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+                    prevX = incX;
+                    prevY = incY;
+					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
+					else {
+						Tile newTile = theWorld[curY + incY][curX + incX];
+						tiles.add(newTile);
+						if (newTile.type == Tile.TileType.FINISH) {
+							containsFinish = true;
+							x = velX - 1;
+						}
+					}
+                }
+            }
+        }//if so, then check to see if any SOONER tile is a wall
+        if(containsFinish){
+            for(Tile tile : tiles){
+                if(tile.type == Tile.TileType.WALL){
+                    Tile newTile = closestTile(tile);
+                    Velocity newVel = new Velocity(0,0);
+                    return new State(newTile, newVel);
+                } else if(tile.type == Tile.TileType.FINISH){
+                    Velocity newVel = new Velocity(0,0);
+                    return new State(tile, newVel);
+                }
+            }
+        }
+        int nextX = curX + (int) velX;
+        int nextY = curY + (int) velY;
+		if(nextX < 0 || nextX >= theWorld[0].length || nextY < 0 || nextY >= theWorld.length){
+			return offTheWorld(curX, curY, (int) velX, (int) velY);
+		}
+        Tile nextTile = theWorld[nextY][nextX];
+        if(nextTile.type == Tile.TileType.WALL){
+            nextTile = closestTile(nextTile);
+            Velocity nextVel = new Velocity(0,0);
+            return new State(nextTile, nextVel);
+        }
+        return new State(nextTile, new Velocity(velX, velY));
+    }
+
+    //in case a state will go off the world, this will return the nearest square to the first hit wall like it crashed
+    public State offTheWorld(int curX, int curY, int curVelX, int curVelY){
+		double slope = ((double) curVelY)/ ((double)curVelX);
+		if(curVelX >= 0) {
+			for (double x = .1; x <= curVelX; x = x + .1) {
+				double y = slope * x;
+				int incX = (int) x;
+				int incY = (int) y;
+				Tile newTile = theWorld[curY + incY][curX + incX];
+				if(newTile.type == Tile.TileType.WALL){
+					newTile = closestTile(newTile);
+					return new State(newTile, new Velocity(0,0));
+				}
+			}
+		} else {
+			for (double x = -.1; x >= curVelX; x = x - .1) {
+				double y = slope * x;
+				double tempX = x;
+				double tempY = y;
+				int incX = (int) tempX;
+				int incY = (int) tempY;
+				//System.out.println(curX + " " + curY + " " + x + " " + y);
+				Tile newTile = theWorld[curY + incY][curX + incX];
+				if(newTile.type == Tile.TileType.WALL){
+					newTile = closestTile(newTile);
+					return new State(newTile, new Velocity(0,0));
+				}
+			}
+		}
+		return new State(theWorld[curY][curX], new Velocity(curVelX, curVelY));
 	}
 }
