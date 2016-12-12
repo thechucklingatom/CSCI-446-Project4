@@ -54,6 +54,7 @@ public class ValueIteration {
 		int numActions = 0;
 		State starting = new State(world.currentTile(),new Velocity(0,0));
 		while(!done){
+			numActions++;
 			StateAction policy = findStateAction(starting);
 			Action nextAction = policy.getAction();
 			Tile nextTile = world.move(nextAction);
@@ -62,6 +63,7 @@ public class ValueIteration {
 				done = true;
 			}
 		}
+		System.out.println("Track finished in " + numActions + " executed.");
 	}
 
 	//find the probability that an action is not applied
@@ -84,16 +86,18 @@ public class ValueIteration {
 	public void calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
+		System.out.println(epsilon * (1 - discount) / discount);
 		while(!(maxChange < epsilon * (1 - discount) / discount)){
 			maxChange = 0;
 			double oldUtility = 0;
 			for(State s : states){
 				double newUtility = reward + (discount * maxUtilAction(s));
 				utilities.set(curIndex, newUtility);
-				if(newUtility - oldUtility > maxChange){
-					maxChange = newUtility - oldUtility;
+				if(Math.abs(newUtility - oldUtility) > maxChange){
+					maxChange = Math.abs(newUtility - oldUtility);
 				}
 			}
+			System.out.println(maxChange);
 		}//while
 	}
 
