@@ -358,7 +358,7 @@ public class World {
 				}
 			}
 		}
-        if(velX > 0) {
+        if(velX < 0) {
             for (double x = .2; x <= velX; x = x + .2) {
                 double y = slope * x;
                 int incX = (int) x;

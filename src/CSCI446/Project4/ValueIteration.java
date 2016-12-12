@@ -69,6 +69,7 @@ public class ValueIteration {
 			Action nextAction;
 			try {
 				nextAction = p.getAction();
+				nextAction.printAction();
 			} catch(NullPointerException e){
 				int tempX = (int) (3 * Math.random()) - 1;
 				int tempY = (int) (3 * Math.random()) - 1;
@@ -76,7 +77,7 @@ public class ValueIteration {
 				nextAction = createAction(tempX, tempY);
 			}
 			Tile nextTile = world.move(nextAction);
-			starting = states.get(findState(nextTile.getxLocation(), nextTile.getyLocation(), world.curVel.getxVelocity(), world.curVel.getyVelocity()));
+			starting = states.get(findState(nextTile.getxLocation(), nextTile.getyLocation(), (int)world.curVel.getxVelocity(), (int)world.curVel.getyVelocity()));
 			System.out.println("Position: (" + nextTile.getxLocation() + "," + nextTile.getyLocation()
 					+ ") Velocity: <" + world.curVel.getxVelocity() + "," + world.curVel.getyVelocity() + ">");
 
@@ -141,14 +142,14 @@ public class ValueIteration {
 		}
 		int curX = curTile.getxLocation();
 		int curY = curTile.getyLocation();
-		double curVelX = curVel.getxVelocity();
-		double curVelY = curVel.getyVelocity();
+		int curVelX = (int)curVel.getxVelocity();
+		int curVelY = (int)curVel.getyVelocity();
 		//calculate the utility if no action is applied (failure)
 		int curStateInd = findState(curX, curY, curVelX, curVelY);
 		State nextState = world.finishDetection(curX, curY, curVelX, curVelY);
 		Tile nextTile = nextState.getTile();
 		Velocity nextVelocity = nextState.getVelocity();
-		int nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
+		int nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), (int)nextVelocity.getxVelocity(), (int)nextVelocity.getyVelocity());
 		State nState = states.get(nxtStateInd);
 		if(nState.isVisited()){
 			//System.out.print("#");
@@ -167,7 +168,7 @@ public class ValueIteration {
 				nextState = world.finishDetection(curX, curY, curVelX + i, curVelY + j);
 				nextTile = nextState.getTile();
 				nextVelocity = nextState.getVelocity();
-				nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
+				nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), (int)nextVelocity.getxVelocity(), (int)nextVelocity.getyVelocity());
 				nState = states.get(nxtStateInd);
 				if(nState.isVisited()){
 					s.setVisited(true);
@@ -188,8 +189,8 @@ public class ValueIteration {
 
 	//returns index of wanted state values in states/utilities
 	//the inputs are the TARGET STATE!
-	public int findState(double posX, double posY, double velX, double velY){
-		Tile tarTile = world.getTileAtLocation((int)posX, (int)posY);
+	public int findState(int posX, int posY, int velX, int velY){
+		Tile tarTile = world.getTileAtLocation(posX, posY);
 
 		//iterate through states until we find the state with inputed values
 		for(int i = 0; i < states.size(); i++){
@@ -199,7 +200,7 @@ public class ValueIteration {
 			double curVelY = curVel.getyVelocity();
 			Tile curTile = s.getTile();
 			//now compare
-			if(tarTile == curTile && curVelX == velX && curVelY == velY){
+			if(tarTile.equals(curTile) && curVelX == velX && curVelY == velY){
 				return i;
 			}
 		} //if we reach here that means we're looking at a finish line
@@ -222,7 +223,7 @@ public class ValueIteration {
 					states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(0.0);
-					maxActions.add(new Action(0));
+					maxActions.add(null);
 				}
 			}
 		}
@@ -234,6 +235,18 @@ public class ValueIteration {
 					states.add(newFinish); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(1.0);
+					maxActions.add(new Action(8));
+				}
+			}
+		}
+		for(Tile start : world.startTiles){
+			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
+				for(int j = -5; j < 6; j++) { //possible yVel
+					State newStart = new State(start, new Velocity(i, j));
+					newStart.setVisited(true);
+					states.add(newStart); //this means that we have every possible state
+					//create placeholders in our lists so that we can index to them later
+					utilities.add(0.0);
 					maxActions.add(null);
 				}
 			}
