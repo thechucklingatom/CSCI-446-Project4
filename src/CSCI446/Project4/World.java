@@ -345,14 +345,27 @@ public class World {
         int prevX = curX;
         int prevY = curY;
         boolean containsFinish = false;
-        if(velX >= 0) {
+		if(velX ==0){
+			for(int i = 1; i <= velY; i++){
+				if(curY + i < 0 || curY + i >= theWorld.length){}
+				else {
+					Tile newTile = theWorld[curY + i][curX];
+					tiles.add(newTile);
+					if (newTile.type == Tile.TileType.FINISH) {
+						containsFinish = true;
+						break;
+					}
+				}
+			}
+		}
+        if(velX > 0) {
             for (double x = .2; x <= velX; x = x + .2) {
                 double y = slope * x;
                 int incX = (int) x;
                 int incY = (int) y;
-                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
-					prevX = incX;
-					prevY = incY;
+                if (curX + incX != prevX || curY + incY != prevY) {
+					prevX = curX + incX;
+					prevY = curY + incY;
 					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
 					else {
 						Tile newTile = theWorld[curY + incY][curX + incX];
@@ -369,7 +382,7 @@ public class World {
                 double y = slope * x;
                 int incX = (int) x;
                 int incY = (int) y;
-                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+                if (curX + incX != prevX || curY + incY != prevX) {
                     prevX = incX;
                     prevY = incY;
 					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
@@ -384,7 +397,7 @@ public class World {
                 }
             }
         }//if so, then check to see if any SOONER tile is a wall
-        if(containsFinish){
+		if(containsFinish){
             for(Tile tile : tiles){
                 if(tile.type == Tile.TileType.WALL){
                     Tile newTile = closestTile(tile);

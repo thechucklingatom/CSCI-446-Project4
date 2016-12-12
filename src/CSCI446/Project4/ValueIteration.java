@@ -1,6 +1,7 @@
 package CSCI446.Project4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,6 +35,7 @@ public class ValueIteration {
 	private double pOfFail = 0;
 	private World world;
 	private List<State> states;
+	private List<State> statesWereVisited;
 	private List<Double> utilities;
 	private List<Action> maxActions;
 	private List<StateAction> policy;
@@ -47,6 +49,7 @@ public class ValueIteration {
 		maxActions = new ArrayList<>();
 		policy = new ArrayList<>();
 		walls = new ArrayList<>();
+		statesWereVisited = new ArrayList<>();
 		generateS();
 	}
 
@@ -82,23 +85,27 @@ public class ValueIteration {
 				numFail++;
 			}
 		}
-		pOfFail = numFail / numTotal;
-		pOfSucces = (numTotal - numFail) / numTotal;
+		pOfFail = ((double)numFail) / ((double)numTotal);
+		pOfSucces = ((double)(numTotal - numFail)) / ((double)numTotal);
 	}
 
 	//The function that will calculate all the utilities for the each block
 	public void calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
-		System.out.println(epsilon * (1 - discount) / discount);
-		while(!(maxChange < epsilon * (1 - discount) / discount)){
+		System.out.println((epsilon * (1 - discount)) / discount);
+		while(!(maxChange < (epsilon * (1 - discount)) / discount)){
 			maxChange = 0;
-			double oldUtility = 0;
-			for(State s : states){
-				oldUtility = maxUtilAction(s);
-				double newUtility = reward + (discount * oldUtility);
+			double oldUtility;
+			for(int i = 0; i < states.size(); i++){
+				State s = states.get(i);
+				if(s.getTile().type == Tile.TileType.FINISH) {continue;}
+				oldUtility = utilities.get(i);
+				double mua = maxUtilAction(s);
+				double newUtility = reward + (discount * mua);
+				//System.out.println(mua);
 				utilities.set(curIndex, newUtility);
-				if(Math.abs(newUtility - oldUtility) > maxChange){
+				if(Math.abs(newUtility - oldUtility) > maxChange && s.isVisited()){
 					maxChange = Math.abs(newUtility - oldUtility);
 				}
 			}
@@ -124,9 +131,13 @@ public class ValueIteration {
 		int curStateInd = findState(curX, curY, curVelX, curVelY);
 		State nextState = world.finishDetection(curX, curY, curVelX, curVelY);
 		Tile nextTile = nextState.getTile();
-
 		Velocity nextVelocity = nextState.getVelocity();
 		int nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
+		State nState = states.get(nxtStateInd);
+		if(nState.isVisited()){
+			//System.out.print("#");
+			s.setVisited(true);
+		}
 		curIndex = curStateInd;
 		failU = utilities.get(nxtStateInd);
 		maxUtil = failU;
@@ -141,6 +152,10 @@ public class ValueIteration {
 				nextTile = nextState.getTile();
 				nextVelocity = nextState.getVelocity();
 				nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
+				nState = states.get(nxtStateInd);
+				if(nState.isVisited()){
+					s.setVisited(true);
+				}
 				sucU = utilities.get(nxtStateInd);
 				totalU = (pOfSucces*sucU) + (pOfFail*failU);
 				if(totalU > maxUtil){
@@ -196,7 +211,9 @@ public class ValueIteration {
 		for(Tile finish : world.finishTiles){
 			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 				for(int j = -5; j < 6; j++) { //possible yVel
-					states.add(new State(finish, new Velocity(i, j))); //this means that we have every possible state
+					State newFinish = new State(finish, new Velocity(i, j));
+					newFinish.setVisited(true);
+					states.add(newFinish); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(1.0);
 					maxActions.add(new Action(0));
