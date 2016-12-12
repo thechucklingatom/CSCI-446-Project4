@@ -332,4 +332,63 @@ public class World {
 
 		return false;
 	}
+
+	//called before a pseudomove call in maxUtilAction
+	public Tile finishDetection(Tile t, Velocity v){
+        //find the tiles that the car will pass through
+        List<Tile> tiles = new ArrayList<>();
+        int curX = t.getxLocation();
+        int curY = t.getyLocation();
+        double velX = v.getxVelocity();
+        double velY = v.getyVelocity();
+        double slope = velY/velX;
+        int prevX = curX;
+        int prevY = curY;
+        boolean containsFinish = false;
+        if(velX >= 0) {
+            for (double x = .2; x <= velX; x = x + .2) {
+                double y = slope * x;
+                int incX = (int) x;
+                int incY = (int) y;
+                if (y != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+                    Tile newTile = theWorld[curX + incX][curY + incY];
+                    tiles.add(newTile);
+                    if(newTile.type == Tile.TileType.FINISH){
+                        containsFinish = true;
+                        x = velX + 1;
+                    }
+                }
+            }
+        } else {
+            for (double x = -.2; x >= -velX; x = x - .2) {
+                double y = slope * x;
+                int incX = (int) x;
+                int incY = (int) y;
+                if (y != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+                    prevX = incX;
+                    prevY = incY;
+                    Tile newTile = theWorld[curX + incX][curY + incY];
+                    if(!tiles.contains(newTile)) {
+                        tiles.add(newTile);
+                        if (newTile.type == Tile.TileType.FINISH) {
+                            containsFinish = true;
+                            x = -velX - 1;
+                        }
+                    }
+                }
+            }
+        }//if so, then check to see if any SOONER tile is a wall
+        if(containsFinish){
+            for(Tile tile : tiles){
+                if(tile.type == Tile.TileType.WALL){
+                    return closestTile(tile);
+                } else if(tile.type == Tile.TileType.FINISH){
+                    return tile;
+                }
+            }
+        }
+        //check them to see if any are the finish line
+
+        return null;
+    }
 }
