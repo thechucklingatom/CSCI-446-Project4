@@ -75,7 +75,7 @@ public class ValueIteration {
 		int numFail = 0;
 		int numTotal = 0;
 		Tile curTile = world.startTile;
-		for(int i = 0; i < 1000; i++) {
+		for(int i = 0; i < 100000; i++) {
 			numTotal++;
 			Tile tempTile = world.pseudoMove(new Action(2));
 			if (curTile.equals(tempTile)) {
@@ -95,7 +95,8 @@ public class ValueIteration {
 			maxChange = 0;
 			double oldUtility = 0;
 			for(State s : states){
-				double newUtility = reward + (discount * maxUtilAction(s));
+				oldUtility = maxUtilAction(s);
+				double newUtility = reward + (discount * oldUtility);
 				utilities.set(curIndex, newUtility);
 				if(Math.abs(newUtility - oldUtility) > maxChange){
 					maxChange = Math.abs(newUtility - oldUtility);
@@ -178,7 +179,7 @@ public class ValueIteration {
 	}
 
 	public void generateS(){
-		for(Tile tile : world.safeTiles){
+		for(Tile tile : world.safeTiles()){
 			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 				for(int j = -5; j < 6; j++) { //possible yVel
 					states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
@@ -187,7 +188,7 @@ public class ValueIteration {
 					maxActions.add(new Action(0));
 				}
 			}
-		}//outer for
+		}
 		for(Tile finish : world.finishTiles){
 			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 				for(int j = -5; j < 6; j++) { //possible yVel

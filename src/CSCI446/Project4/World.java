@@ -53,6 +53,8 @@ public class World {
 		startTile = startTiles.get(rng.nextInt(startTiles.size()));
 		startX = startTile.getxLocation();
 		startY = startTile.getyLocation();
+		xLocation = startX;
+		yLocation = startY;
 	}
 
 	public void setReward(Tile s) {
@@ -167,7 +169,7 @@ public class World {
 	public Tile pseudoMove(Action a) {
 		// performs a normal move with output without actually moving the agent
 		double prob = rng.nextDouble();
-		Velocity tempVelocity = curVel;
+		Velocity tempVelocity = new Velocity(curVel.getxVelocity(), curVel.getyVelocity());
 		if (prob <= 0.8) {
 			switch (a.getActionInt()) {
 				case 0: // we are moving north
@@ -429,7 +431,7 @@ public class World {
 				double tempY = y;
 				int incX = (int) tempX;
 				int incY = (int) tempY;
-				System.out.println(curX + " " + curY + " " + x + " " + y);
+				//System.out.println(curX + " " + curY + " " + x + " " + y);
 				Tile newTile = theWorld[curY + incY][curX + incX];
 				if(newTile.type == Tile.TileType.WALL){
 					newTile = closestTile(newTile);
@@ -437,6 +439,6 @@ public class World {
 				}
 			}
 		}
-		return null;
+		return new State(theWorld[curY][curX], new Velocity(curVelX, curVelY));
 	}
 }
