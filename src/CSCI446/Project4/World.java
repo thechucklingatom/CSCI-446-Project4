@@ -348,31 +348,37 @@ public class World {
                 double y = slope * x;
                 int incX = (int) x;
                 int incY = (int) y;
-                if (y != 0 && y != 0 && (incX != prevX || incY != prevX)) {
-                    Tile newTile = theWorld[curX + incX][curY + incY];
-                    tiles.add(newTile);
-                    if(newTile.type == Tile.TileType.FINISH){
-                        containsFinish = true;
-                        x = velX + 1;
-                    }
+                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+					prevX = incX;
+					prevY = incY;
+					if(curX + incX < 0 || curX + incX >= theWorld.length || curY + incY< 0 || curY + incY >= theWorld[0].length){}
+					else {
+						Tile newTile = theWorld[curY + incY][curX + incX];
+						tiles.add(newTile);
+						if (newTile.type == Tile.TileType.FINISH) {
+							containsFinish = true;
+							x = velX + 1;
+						}
+					}
                 }
             }
         } else {
-            for (double x = -.2; x >= -velX; x = x - .2) {
+            for (double x = -.2; x >= velX; x = x - .2) {
                 double y = slope * x;
                 int incX = (int) x;
                 int incY = (int) y;
-                if (y != 0 && y != 0 && (incX != prevX || incY != prevX)) {
+                if (x != 0 && y != 0 && (incX != prevX || incY != prevX)) {
                     prevX = incX;
                     prevY = incY;
-                    Tile newTile = theWorld[curX + incX][curY + incY];
-                    if(!tiles.contains(newTile)) {
-                        tiles.add(newTile);
-                        if (newTile.type == Tile.TileType.FINISH) {
-                            containsFinish = true;
-                            x = -velX - 1;
-                        }
-                    }
+					if(curX + incX < 0 || curX + incX >= theWorld[0].length || curY + incY< 0 || curY + incY >= theWorld.length){}
+					else {
+						Tile newTile = theWorld[curY + incY][curX + incX];
+						tiles.add(newTile);
+						if (newTile.type == Tile.TileType.FINISH) {
+							containsFinish = true;
+							x = velX - 1;
+						}
+					}
                 }
             }
         }//if so, then check to see if any SOONER tile is a wall
@@ -390,7 +396,10 @@ public class World {
         }
         int nextX = curX + (int) velX;
         int nextY = curY + (int) velY;
-        Tile nextTile = theWorld[nextX][nextY];
+		if(nextX < 0 || nextX >= theWorld[0].length || nextY < 0 || nextY >= theWorld.length){
+			return offTheWorld(curX, curY, (int) velX, (int) velY);
+		}
+        Tile nextTile = theWorld[nextY][nextX];
         if(nextTile.type == Tile.TileType.WALL){
             nextTile = closestTile(nextTile);
             Velocity nextVel = new Velocity(0,0);
@@ -398,4 +407,36 @@ public class World {
         }
         return new State(nextTile, new Velocity(velX, velY));
     }
+
+    //in case a state will go off the world, this will return the nearest square to the first hit wall like it crashed
+    public State offTheWorld(int curX, int curY, int curVelX, int curVelY){
+		double slope = ((double) curVelY)/ ((double)curVelX);
+		if(curVelX >= 0) {
+			for (double x = .1; x <= curVelX; x = x + .1) {
+				double y = slope * x;
+				int incX = (int) x;
+				int incY = (int) y;
+				Tile newTile = theWorld[curY + incY][curX + incX];
+				if(newTile.type == Tile.TileType.WALL){
+					newTile = closestTile(newTile);
+					return new State(newTile, new Velocity(0,0));
+				}
+			}
+		} else {
+			for (double x = -.1; x >= curVelX; x = x - .1) {
+				double y = slope * x;
+				double tempX = x;
+				double tempY = y;
+				int incX = (int) tempX;
+				int incY = (int) tempY;
+				System.out.println(curX + " " + curY + " " + x + " " + y);
+				Tile newTile = theWorld[curY + incY][curX + incX];
+				if(newTile.type == Tile.TileType.WALL){
+					newTile = closestTile(newTile);
+					return new State(newTile, new Velocity(0,0));
+				}
+			}
+		}
+		return null;
+	}
 }

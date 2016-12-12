@@ -27,7 +27,7 @@ public class ValueIteration {
 	*/
 
 	private double epsilon = .01;
-	private double maxChange = 0;
+	private double maxChange = 1;
 	private final double discount = .6;
 	private double reward = -1;
 	private double pOfSucces = 1;
@@ -165,7 +165,7 @@ public class ValueIteration {
 				return i;
 			}
 		} //if we reach here that means we're looking at a finish line
-		return -1;
+		return states.size() - 1;
 	}
 
 	public StateAction findStateAction(State s){
@@ -178,20 +178,15 @@ public class ValueIteration {
 	}
 
 	public void generateS(){
-		for(Tile[] tiles : world.theWorld){
-			for(Tile tile : tiles){
-				if(tile.type == Tile.TileType.WALL){
-					continue;
+		for(Tile tile : world.safeTiles){
+			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
+				for(int j = -5; j < 6; j++) { //possible yVel
+					states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
+					//create placeholders in our lists so that we can index to them later
+					utilities.add(0.0);
+					maxActions.add(new Action(0));
 				}
-				for(int i = -5; i < 6; i++) { //iterate through the possible xVel
-					for(int j = -5; j < 6; j++) { //possible yVel
-						states.add(new State(tile, new Velocity(i, j))); //this means that we have every possible state
-						//create placeholders in our lists so that we can index to them later
-						utilities.add(0.0);
-						maxActions.add(new Action(0));
-					}
-				}
-			}//inner for
+			}
 		}//outer for
 		for(Tile finish : world.finishTiles){
 			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
