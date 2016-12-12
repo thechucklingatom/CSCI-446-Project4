@@ -29,7 +29,7 @@ public class ValueIteration {
 
 	private double epsilon = .01;
 	private double maxChange = 1;
-	private final double discount = .9;
+	private final double discount = .75;
 	private double reward = -1;
 	private double pOfSucces = 1;
 	private double pOfFail = 0;
@@ -66,14 +66,14 @@ public class ValueIteration {
 		while(!done){
 			numActions++;
 			StateAction p = findStateAction(starting);
-			Action nextAction;
+			Action nextAction = null;
 			try {
 				nextAction = p.getAction();
 				nextAction.printAction();
 			} catch(NullPointerException e){
 				int tempX = (int) (3 * Math.random()) - 1;
 				int tempY = (int) (3 * Math.random()) - 1;
-				System.out.println(tempX + " " + tempY);
+				System.out.println("Random move: " + tempX + " " + tempY);
 				nextAction = createAction(tempX, tempY);
 			}
 			Tile nextTile = world.move(nextAction);
@@ -128,6 +128,7 @@ public class ValueIteration {
 			}
 			System.out.println("Maximum Utility Change: " + maxChange);
 		}//while
+		System.out.println("Utilities map completed in " + numIterations + " iterations.");
 	}
 
 	//a lot of calculations and calls needed for this, so separated into new method
@@ -243,7 +244,6 @@ public class ValueIteration {
 			for(int i = -5; i < 6; i++) { //iterate through the possible xVel
 				for(int j = -5; j < 6; j++) { //possible yVel
 					State newStart = new State(start, new Velocity(i, j));
-					newStart.setVisited(true);
 					states.add(newStart); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(0.0);
