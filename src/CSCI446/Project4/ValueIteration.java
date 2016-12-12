@@ -29,7 +29,7 @@ public class ValueIteration {
 
 	private double epsilon = .01;
 	private double maxChange = 1;
-	private final double discount = .6;
+	private final double discount = .9;
 	private double reward = -1;
 	private double pOfSucces = 1;
 	private double pOfFail = 0;
@@ -56,16 +56,30 @@ public class ValueIteration {
 	public void runValueIteration(){
 		findP();
 		calculateUtilities();
+		System.out.println("Done calculating");
 		findPolicy();
 		boolean done = false;
 		int numActions = 0;
 		State starting = new State(world.currentTile(),new Velocity(0,0));
+		System.out.println("Position: (" + starting.getTile().getxLocation() + "," + starting.getTile().getyLocation()
+				+ ") Velocity: <" + world.curVel.getxVelocity() + "," + world.curVel.getyVelocity() + ">");
 		while(!done){
 			numActions++;
-			StateAction policy = findStateAction(starting);
-			Action nextAction = policy.getAction();
+			StateAction p = findStateAction(starting);
+			Action nextAction;
+			try {
+				nextAction = p.getAction();
+			} catch(NullPointerException e){
+				int tempX = (int) (3 * Math.random()) - 1;
+				int tempY = (int) (3 * Math.random()) - 1;
+				System.out.println(tempX + " " + tempY);
+				nextAction = createAction(tempX, tempY);
+			}
 			Tile nextTile = world.move(nextAction);
 			starting = states.get(findState(nextTile.getxLocation(), nextTile.getyLocation(), world.curVel.getxVelocity(), world.curVel.getyVelocity()));
+			System.out.println("Position: (" + nextTile.getxLocation() + "," + nextTile.getyLocation()
+					+ ") Velocity: <" + world.curVel.getxVelocity() + "," + world.curVel.getyVelocity() + ">");
+
 			if(starting.getTile().type == Tile.TileType.FINISH){
 				done = true;
 			}
@@ -93,10 +107,12 @@ public class ValueIteration {
 	public void calculateUtilities(){
 		//this is the main iterator that will terminate when the largest change of
 		//utility is below a threshold determined by the discount and epsilon
-		System.out.println((epsilon * (1 - discount)) / discount);
+		int numIterations = 0;
+		System.out.println("Cutoff value: " + (epsilon * (1 - discount)) / discount);
 		while(!(maxChange < (epsilon * (1 - discount)) / discount)){
 			maxChange = 0;
 			double oldUtility;
+			numIterations++;
 			for(int i = 0; i < states.size(); i++){
 				State s = states.get(i);
 				if(s.getTile().type == Tile.TileType.FINISH) {continue;}
@@ -109,7 +125,7 @@ public class ValueIteration {
 					maxChange = Math.abs(newUtility - oldUtility);
 				}
 			}
-			System.out.println(maxChange);
+			System.out.println("Maximum Utility Change: " + maxChange);
 		}//while
 	}
 
@@ -164,7 +180,9 @@ public class ValueIteration {
 				}
 			}
 		} //at this point, we have the utilities of all possible actions
-		maxActions.set(curStateInd, maxA);
+		if(s.isVisited()) {
+			maxActions.set(curStateInd, maxA);
+		}
 		return maxUtil;
 	}
 
@@ -216,7 +234,7 @@ public class ValueIteration {
 					states.add(newFinish); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(1.0);
-					maxActions.add(new Action(0));
+					maxActions.add(null);
 				}
 			}
 		}

@@ -23,9 +23,9 @@ public class Main {
 
 		System.out.println("Iteration done");
 
-		QLearn qLearn = QLearn.getInstance(worldGenerator.generatedWorld,
+		/*QLearn qLearn = QLearn.getInstance(worldGenerator.generatedWorld,
 				new State(worldGenerator.generatedWorld.startTile, new Velocity()));
 
-		qLearn.runQLearn();
+		qLearn.runQLearn();*/
 	}
 }
