@@ -333,14 +333,12 @@ public class World {
 		return false;
 	}
 
-	//called before a pseudomove call in maxUtilAction
-	public Tile finishDetection(Tile t, Velocity v){
+	//called before a findState() call in maxUtilAction
+    //this gives the TARGET STATE
+    //velocity HAS HAD ACC APPLIED
+	public State finishDetection(int curX, int curY, double velX, double velY){
         //find the tiles that the car will pass through
         List<Tile> tiles = new ArrayList<>();
-        int curX = t.getxLocation();
-        int curY = t.getyLocation();
-        double velX = v.getxVelocity();
-        double velY = v.getyVelocity();
         double slope = velY/velX;
         int prevX = curX;
         int prevY = curY;
@@ -381,14 +379,23 @@ public class World {
         if(containsFinish){
             for(Tile tile : tiles){
                 if(tile.type == Tile.TileType.WALL){
-                    return closestTile(tile);
+                    Tile newTile = closestTile(tile);
+                    Velocity newVel = new Velocity(0,0);
+                    return new State(newTile, newVel);
                 } else if(tile.type == Tile.TileType.FINISH){
-                    return tile;
+                    Velocity newVel = new Velocity(0,0);
+                    return new State(tile, newVel);
                 }
             }
         }
-        //check them to see if any are the finish line
-
-        return null;
+        int nextX = curX + (int) velX;
+        int nextY = curY + (int) velY;
+        Tile nextTile = theWorld[nextX][nextY];
+        if(nextTile.type == Tile.TileType.WALL){
+            nextTile = closestTile(nextTile);
+            Velocity nextVel = new Velocity(0,0);
+            return new State(nextTile, nextVel);
+        }
+        return new State(nextTile, new Velocity(velX, velY));
     }
 }

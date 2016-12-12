@@ -110,7 +110,10 @@ public class ValueIteration {
 		double curVelY = curVel.getyVelocity();
 		//calculate the utility if no action is applied (failure)
 		int curStateInd = findState(curX, curY, curVelX, curVelY);
-		int nxtStateInd = findState(curX + curVelX, curY + curVelY, curVelX, curVelY);
+		State nextState = world.finishDetection(curX, curY, curVelX, curVelY);
+		Tile nextTile = nextState.getTile();
+		Velocity nextVelocity = nextState.getVelocity();
+		int nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
 		curIndex = curStateInd;
 		failU = utilities.get(nxtStateInd);
 		maxUtil = failU;
@@ -118,12 +121,13 @@ public class ValueIteration {
 		for(int i = -1; i < 2; i++){ //iterate through the possible actions
 			for(int j = -1; j < 2; j++){
 				if(i == 0 && j == 0){continue;}
-				//find the tile that corresponds to that stateaction pair
+				//find the tile that is the result of a stateaction pair
 				double sucU, totalU;
 				Action curA = createAction(i, j);
-				double tempVelX = curVelX + i;
-				double tempVelY = curVelY + j;
-				nxtStateInd = findState(curX + tempVelX, curY + tempVelY, curVelX + i, curVelY + j);
+				nextState = world.finishDetection(curX, curY, curVelX + i, curVelY + j);
+				nextTile = nextState.getTile();
+				nextVelocity = nextState.getVelocity();
+				nxtStateInd = findState(nextTile.getxLocation(), nextTile.getyLocation(), nextVelocity.getxVelocity(), nextVelocity.getyVelocity());
 				sucU = utilities.get(nxtStateInd);
 				totalU = (pOfSucces*sucU) + (pOfFail*failU);
 				if(totalU > maxUtil){
@@ -140,13 +144,6 @@ public class ValueIteration {
 	//the inputs are the TARGET STATE!
 	public int findState(double posX, double posY, double velX, double velY){
 		Tile tarTile = world.getTileAtLocation((int)posX, (int)posY);
-		/*THIS ONLY APPLIES TO CRASH SCENARIO !*/
-		//must check to see if we would've landed on a wall
-		if(tarTile.type == Tile.TileType.WALL){
-			tarTile = world.closestTile(tarTile);
-			velX = 0;
-			velY = 0;
-		}
 
 		//iterate through states until we find the state with inputed values
 		for(int i = 0; i < states.size(); i++){
