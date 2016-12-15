@@ -344,12 +344,21 @@ public class World {
     //velocity HAS HAD ACC APPLIED
 	public State finishDetection(int curX, int curY, double velX, double velY){
         //find the tiles that the car will pass through
-        List<Tile> tiles = new ArrayList<>();
+		List<Tile> tiles = new ArrayList<>();
         double slope = velY/velX;
         int prevX = curX;
         int prevY = curY;
         boolean containsFinish = false;
-		if(velX ==0){
+		if(velX > 5){
+			velX = 5;
+		} else if(velX < -5){
+			velX = -5;
+		} if(velY > 5){
+			velY = 5;
+		} else if(velY < -5){
+			velY = -5;
+		}
+		if(velX ==0 && velY > 0){
 			for(int i = 1; i <= velY; i++){
 				if(curY + i < 0 || curY + i >= theWorld.length){}
 				else {
@@ -361,8 +370,19 @@ public class World {
 					}
 				}
 			}
-		}
-        if(velX > 0) {
+		} else if(velX == 0 && velY < 0){
+			for(int i = -1; i >= velY; i--){
+				if(curY + i < 0 || curY + i >= theWorld.length){}
+				else {
+					Tile newTile = theWorld[curY + i][curX];
+					tiles.add(newTile);
+					if (newTile.type == Tile.TileType.FINISH) {
+						containsFinish = true;
+						break;
+					}
+				}
+			}
+		} else if(velX > 0) {
             for (double x = .2; x <= velX; x = x + .2) {
                 double y = slope * x;
                 int incX = (int) x;

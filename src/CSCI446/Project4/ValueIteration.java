@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Robert Putnam
+ * @author Robert Putnam & Alan Fraticelli
  */
 public class ValueIteration {
 
@@ -30,7 +30,7 @@ public class ValueIteration {
 	private double epsilon = .01;
 	private double maxChange = 1;
 	private final double discount = .75;
-	private double reward = -1;
+	private int reward = -1;
 	private double pOfSucces = 1;
 	private double pOfFail = 0;
 	private World world;
@@ -55,6 +55,8 @@ public class ValueIteration {
 
 	public void runValueIteration(){
 		findP();
+		pOfFail = .2;
+		pOfSucces = .8;
 		calculateUtilities();
 		System.out.println("Done calculating");
 		findPolicy();
@@ -67,10 +69,10 @@ public class ValueIteration {
 			numActions++;
 			StateAction p = findStateAction(starting);
 			Action nextAction = null;
-			try {
+			if(starting.isVisited()) {
 				nextAction = p.getAction();
 				nextAction.printAction();
-			} catch(NullPointerException e){
+			} else{
 				int tempX = (int) (3 * Math.random()) - 1;
 				int tempY = (int) (3 * Math.random()) - 1;
 				System.out.println("Random move: " + tempX + " " + tempY);
@@ -120,9 +122,12 @@ public class ValueIteration {
 				oldUtility = utilities.get(i);
 				double mua = maxUtilAction(s);
 				double newUtility = reward + (discount * mua);
-				//System.out.println(mua);
+				if(!s.isVisited()){
+					newUtility = oldUtility + reward;
+					//System.out.println(newUtility);
+				}
 				utilities.set(curIndex, newUtility);
-				if(Math.abs(newUtility - oldUtility) > maxChange && s.isVisited()){
+				if(Math.abs(newUtility - oldUtility) > maxChange){
 					maxChange = Math.abs(newUtility - oldUtility);
 				}
 			}
@@ -176,6 +181,7 @@ public class ValueIteration {
 				}
 				sucU = utilities.get(nxtStateInd);
 				totalU = (pOfSucces*sucU) + (pOfFail*failU);
+				//totalU = sucU;
 				if(totalU > maxUtil){
 					maxUtil = totalU;
 					maxA = curA;
@@ -197,8 +203,8 @@ public class ValueIteration {
 		for(int i = 0; i < states.size(); i++){
 			State s = states.get(i);
 			Velocity curVel = s.getVelocity();
-			double curVelX = curVel.getxVelocity();
-			double curVelY = curVel.getyVelocity();
+			int curVelX = (int) curVel.getxVelocity();
+			int curVelY = (int) curVel.getyVelocity();
 			Tile curTile = s.getTile();
 			//now compare
 			if(tarTile.equals(curTile) && curVelX == velX && curVelY == velY){
@@ -236,7 +242,7 @@ public class ValueIteration {
 					states.add(newFinish); //this means that we have every possible state
 					//create placeholders in our lists so that we can index to them later
 					utilities.add(1.0);
-					maxActions.add(new Action(8));
+					maxActions.add(null);
 				}
 			}
 		}
@@ -273,20 +279,20 @@ public class ValueIteration {
 				break;
 			case 0:
 				if(inY == -1){
-					action = new Action(4);
+					action = new Action(0);
 				} else if(inY == 0){
 					action = new Action(8);
 				} else{
-					action = new Action(0);
+					action = new Action(4);
 				}
 				break;
 			case 1:
 				if(inY == -1){
-					action = new Action(3);
+					action = new Action(1);
 				} else if(inY == 0){
 					action = new Action(2);
 				} else{
-					action = new Action(1);
+					action = new Action(3);
 				}
 				break;
 			default: //we should never hit here
